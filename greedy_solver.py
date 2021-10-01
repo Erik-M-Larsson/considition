@@ -1,7 +1,6 @@
 ﻿import operator
 
 
-# Hej
 class GreedySolver:
     xp = 0
     zp = 0
@@ -14,25 +13,31 @@ class GreedySolver:
     lastKnownMaxHeight = 0
 
     def __init__(self, game_info):
-        self.vehicle_length = game_info["vehicle"]["length"]
+       
+        self.vehicle_length = game_info["vehicle"]["length"]    # Måtten på bilen
         self.vehicle_width = game_info["vehicle"]["width"]
         self.vehicle_height = game_info["vehicle"]["height"]
-        self.packages = game_info["dimensions"]
-        for package in self.packages:
-            if(package["height"] and package["weightClass"] == 2 > self.lastKnownMaxHeight):
+        self.packages = game_info["dimensions"]                 # Lista med dictionary för varje pkt           
+        for package in self.packages:                           # För alla paket
+            if(package["height"] > self.lastKnownMaxHeight and package["weightClass"] == 2 ): # Fel ordning?
                 self.lastKnownMaxHeight = package["height"]
             if(package["weightClass"] == 2):
                 self.heavyPackages.append(
                     {"area": package["width"]*package["length"], "id": package["id"]})
-            elif(package["weightClass"] != 2):
+            elif(package["weightClass"] != 2): # Varför inte bara else?
                 self.otherPackages.append(
                     {"area": package["width"]*package["length"], "id": package["id"]})
         self.heavyPackages = sorted(
-            self.heavyPackages, key=lambda i: (i['area']))
+            self.heavyPackages, key=lambda i: (i['area'])) # sortera på area?
         self.otherPackages = sorted(
             self.otherPackages, key=lambda i: (i['area']))
+        
+        print(self.heavyPackages)
+        print(self.otherPackages)
+
 
     def Solve(self):
+     
         for p in self.packages:
             if(self.zp <= self.lastKnownMaxHeight):
                 id = self.heavyPackages.pop()["id"]
