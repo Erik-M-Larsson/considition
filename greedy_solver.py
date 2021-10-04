@@ -20,6 +20,7 @@ class GreedySolver:
         self.packages = game_info["dimensions"]                 # Lista med dictionary för varje pkt           
         for package in self.packages:                           # För alla paket
             if(package["height"] > self.lastKnownMaxHeight and package["weightClass"] == 2 ): # Fel ordning?
+            #if(package["height"] and package["weightClass"] == 2 > self.lastKnownMaxHeight):
                 self.lastKnownMaxHeight = package["height"]
             if(package["weightClass"] == 2):
                 self.heavyPackages.append(
