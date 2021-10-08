@@ -2,6 +2,7 @@
 import api
 import json
 from random import shuffle 
+from math import sqrt, tau, sin, cos
 import os
 
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
@@ -100,9 +101,97 @@ def main():
 	packningsgrad = tot_paket_volym / total_volym
 	print(f"Packningsgrad: {packningsgrad}")
 
-	#Skicka in lösning för bedömning
-	#submit_game_response = api.submit_game(api_key, map_name, solution)
-	#print(submit_game_response)
+
+	# kolla koordinater paket
+	solution_0 = solution
+	x, y, z, l, b, h, alfa = 155, 100, 0, 17, 37, 11, tau/4
+	"""x1 = x
+	x2 = round(x+b*sin(alfa))
+	x3 = round(x+l*cos(alfa)+b*sin(alfa))
+	x4 = round(x+l*cos(alfa))
+
+	y1 = y
+	y2 = round(y+b*cos(alfa))
+	y3 = round(y+b*cos(alfa)-l*sin(alfa))
+	y4 = round(y-l*sin(alfa))
+
+	print(l, b, h)
+	print(sqrt((x1-x2)**2 + (y1-y2)**2))
+	print(sqrt((x2-x3)**2 + (y2-y3)**2))
+	print(sqrt((x3-x4)**2 + (y3-y4)**2))
+	print(sqrt((x4-x1)**2 + (y4-y1)**2))
+
+
+	x14_list = [[0, x1, x1, x2, x2],	
+				[0, x1, x2, x1, x2],
+				[0, x1, x2, x2, x1],
+				[0, x2, x2, x1, x1],
+				[0, x2, x1, x2, x1],
+				[0, x2, x1, x1, x2]]
+
+	x58_list = [[x3, x3, x4, x4],
+				[x3, x4, x3, x4],
+				[x3, x4, x4, x3],
+				[x4, x4, x3, x3],
+				[x4, x3, x4, x3], 
+				[x4, x3, x3, x4]]
+
+	y14_list = [[y1, y1, y2, y2],	
+				[y1, y2, y1, y2],
+				[y1, y2, y2, y1],
+				[y2, y2, y1, y1],
+				[y2, y1, y2, y1],
+				[y2, y1, y1, y2]]
+
+	y58_list = [[y3, y3, y4, y4],
+				[y3, y4, y3, y4],
+				[y3, y4, y4, y3],
+				[y4, y4, y3, y3],
+				[y4, y3, y4, y3], 
+				[y4, y3, y3, y4]]
+
+
+
+	xy_list = []			
+
+	for x14 in x14_list:
+		for x58 in x58_list:		 
+		 	for y14 in y14_list:	  
+			  	for y58 in y58_list:
+					  xy_list.append(x14 + x58 + y14 + y58)"""
+
+	xy_list = [[0, x, x, x+5, x+5, x+l, x+l, x+l+5, x+l+5, y, y, y, y, y+b, y+b, y+b, y+b]]
+
+	#print(xy_list)
+
+	godkanda = 0
+	for i,xy in enumerate(xy_list):
+		print(i)
+		if i >= 0:
+			solution[-1] = ({"id": solution_0[-1]["id"], 
+							"x1": xy[1], "x2": xy[2], "x3": xy[3], "x4": xy[4],
+							"x5": xy[5], "x6": xy[6], "x7": xy[7], "x8": xy[8],
+
+							"y1": xy[9], "y2": xy[10], "y3": xy[11], "y4": xy[12],
+							"y5": xy[13], "y6": xy[14], "y7": xy[15], "y8": xy[16],
+
+							"z1": z, "z2": z, "z3": z, "z4": z,
+							"z5": z + h, "z6": z + h, "z7": z + h, "z8": z + h, 
+							"weightClass": solution_0[-1]["weightClass"],
+							"orderClass": solution_0[-1]["orderClass"]}) 
+
+
+
+			#Skicka in lösning för bedömning
+			
+			submit_game_response = api.submit_game(api_key, map_name, solution)
+			print(submit_game_response, 1)
+
+			if submit_game_response != None:
+				print(xy)
+				godkanda += 1
+
+	print(godkanda, ' / ',  i)		
 
 if __name__ == "__main__":
     main()

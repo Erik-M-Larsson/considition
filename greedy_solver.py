@@ -1,5 +1,5 @@
 ﻿import operator
-
+from math import sin, cos, sqrt, tau 
 
 class GreedySolver:
     xp = 0
@@ -109,7 +109,7 @@ class GreedySolver:
             elif package["id"] == 45:
                 self.AddPackage_manual(package, 60, 102, 117, 150, 93, 111)
             elif package["id"] == 59: # 17 37 11
-                self.AddPackage_manual(package, 183, 200, 113, 150, 0, 11)             
+                self.AddPackage_manual_angle(package, 150, 100, 0, 17, 37, 11, tau/12)             
             
 
 
@@ -255,3 +255,33 @@ class GreedySolver:
                                     "z5": z58, "z6": z58, "z7": z58, "z8": z58, 
                                     "weightClass": package["weightClass"],
                                     "orderClass": package["orderClass"]})
+
+    def AddPackage_manual_angle(self, package, x, y, z, l, b, h, alfa):
+            
+        x1 = x
+        x2 = round(x+b*sin(alfa))
+        x3 = round(x+l*cos(alfa)+b*sin(alfa))
+        x4 = round(x+l*cos(alfa))
+
+        y1 = y
+        y2 = round(y+b*cos(alfa))
+        y3 = round(y+b*cos(alfa)-l*sin(alfa))
+        y4 = round(y-l*sin(alfa))
+
+        self.placedPackages.append({"id": package["id"], 
+                                    "x1": x1, "x2": x2, "x3": x1, "x4": x2,
+                                    "x5": x4, "x6": x3, "x7": x4, "x8": x3,
+
+                                    "y1": y4, "y2": y1, "y3": y4, "y4": y1,
+                                    "y5": y3, "y6": y2, "y7": y3, "y8": y2,
+
+                                    "z1": z, "z2": z, "z3": z, "z4": z,
+                                    "z5": z + h, "z6": z + h, "z7": z + h, "z8": z + h, 
+                                    "weightClass": package["weightClass"],
+                                    "orderClass": package["orderClass"]}) 
+
+        #print(l, b, h)
+        #print(sqrt((x1-x2)**2 + (y1-y2)**2))
+        #print(sqrt((x2-x3)**2 + (y2-y3)**2))
+        #print(sqrt((x3-x4)**2 + (y3-y4)**2))
+        #print(sqrt((x4-x1)**2 + (y4-y1)**2))
