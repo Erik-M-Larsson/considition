@@ -1,8 +1,9 @@
-from math import prod
+#from math import prod
+import numpy as np
 from typing import Type
 
 class ErikurStower:
-    """Klass för riktig stuveriarbetare"""
+    """Klass för riktiga stuveriarbetare"""
 
     def __init__(self, game_info: dict) -> None:
         if not isinstance(game_info, dict):   # Kontrollera att det är en dict
@@ -11,6 +12,7 @@ class ErikurStower:
         try: # Testa om rätt keys finns
             self._truck = CyberTruck(game_info["vehicle"])
             self._not_loaded_packages = game_info["dimensions"]
+            self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda i: (i["orderClass"]), reverse = True)
         except KeyError:
                 raise ValueError("Ogiltig 'game_info.")
 
@@ -26,10 +28,59 @@ class ErikurStower:
 
 
 class CyberTruck:
+    """Klass för lastbilen sm paketen lastas på"""
     
     def __init__(self,vehicle: dict) -> None:
-        return None
+        if not isinstance(vehicle, dict):   # Kontrollera att det är en dict
+            raise ValueError("Ogiltig 'game_info'")
+        
+        try: # Testa om rätt keys finns
+            self._length = vehicle["length"]
+            self._width = vehicle["width"]
+            self._height =vehicle["height"]
+        except KeyError:
+                raise ValueError("Ogiltig 'vehicle'")
 
+        self.occu_space = np.ones((self.length, self.width, self.height), np.int8) * -1  # -1 -> ledigt
+        
+
+
+        
+    @property
+    def length(self) -> int:
+        return self._length
+
+    @property
+    def width(self) -> int:
+        return self._width
+           
+    @property
+    def height(self) -> int:
+        return self._height
+
+    @property
+    def volume(self) -> int:
+        return self.length * self.width * self.height
+
+    @property
+    def occu_space(self) -> np.ndarray:
+        return self._occu_space
+
+    @occu_space.setter
+    def occu_space(self, val) -> None:
+        if isinstance(val, np.ndarray):
+            self._occu_space = val
+        else:
+            raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
+
+    @property
+    def occu_volume(self) -> int:
+        return np.count_nonzero(self.occu_space +1) # Räknar alla platser skillda från noll. +1  sätter alla lediga platser till 0.
+
+
+    @property
+    def free_length(self) -> int:
+        return self.occu_space.shape[0] - np.max(np.nonzero(np.count_nonzero(self.occu_space +1, axis=(1,2)))) - 1
 
 
 
@@ -44,10 +95,9 @@ class Package:
         self._order_class = package_data["orderClass"]
         self._weight_class = package_data["weightClass"]
         
-        # Sorterad lista med paketets dimensioner
+        # Sorterad lista med paketets dimensioner # TODO felcheck dim? 
         self._dimensions = [package_data["width"], package_data["length"], package_data["height"]]      
         self._dimensions.sort()   
-        self._volume = prod(self.dimensions)
 
         self.loaded_on_truck = False
         # Listor med koordinaterna på lastbilen
@@ -72,7 +122,7 @@ class Package:
     
     @property 
     def volume(self) -> int:
-        return self._volume
+        return np.prod(self.dimensions)
 
     @property 
     def loaded_on_truck(self) -> bool:
