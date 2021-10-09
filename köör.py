@@ -7,22 +7,40 @@ r = {'mapName': 'training1', 'vehicle': {'length': 200, 'width': 150, 'height': 
 
 el = ErikurStower(r)
 
-#s = el.stow_truck()
-print(el._not_loaded_packages)
+s = el.stow_truck()
+#print("paket kvar", len(el._not_loaded_packages))
+#print("occu_volume", el._truck.occu_volume)
+#print(el._truck.occu_space[0:10, 0:10, 0:10])
+#print(el._truck.occu_space[10:20, 0:10, 0:10])
+#print(el._truck.occu_space[20:30, 0:10, 0:10])
+#print(el._truck.occu_space[30:40, 0:10, 0:10])
+#print(el._truck.occu_space[40:50, 0:10, 0:10])
+print("***")
+#print(el._truck.occu_space[0:10, 10:20, 0:10])
+#print(el._truck.occu_space[0:10, 20:30, 0:10])
+#print("\npaket x", el._truck.loaded_packages[-3].x18)
+#print("paket y", el._truck.loaded_packages[-3].y18)
+#print("paket z", el._truck.loaded_packages[-3].z18)
 
-exit()
-p = Package({'id': 0, 'width': 59, 'length': 58, 'height': 25, 'weightClass': 2, 'orderClass': 1})
-print(p.order_class)
-print(p.dimensions)
-print(p.volume)
+#print(el._truck.free_length)
 
-cb = CyberTruck({'length': 200, 'width': 150, 'height': 136})
-cb.occu_space[100, 55, 120] = 5
-cb.occu_space[-15, 100,  20] = 5
+#exit()
+#p = Package({'id': 0, 'width': 59, 'length': 58, 'height': 25, 'weightClass': 2, 'orderClass': 1})
+#print(p.order_class)
+#print(p.dimensions)
+#print(p.volume)
 
-print(cb.occu_space.shape, cb.occu_space.ndim, cb.occu_space.size)
+#cb = CyberTruck({'length': 200, 'width': 150, 'height': 136})
+#cb.occu_space[25, 25, -3] = 1
+#cb.occu_space[0:10, 0:10,  0:10] = 1
+#cb.free_length
+
+#print(cb.occu_space.shape, cb.occu_space.ndim, cb.occu_space.size)
 #print(np.sum(cb.occu_space), cb.volume)
 #print(cb.occu_volume)
 
-print(cb.occu_space.shape[0] - np.max(np.nonzero(np.count_nonzero(cb.occu_space +1, axis=(1,2)))) - 1)
-print( cb.free_length)
+#print(cb.occu_space.shape[0] - np.max(np.nonzero(np.count_nonzero(cb.occu_space +1, axis=(1,2)))) - 1)
+#print( cb.free_length)
+
+#print(np.count_nonzero(cb.occu_space[0:100, 0:50, -2:-1] +1) == 0)
+#print(cb.is_space_empty(0, 0, -2, 100, 50, -1))
