@@ -4,6 +4,128 @@ from typing import Type
 from itertools import permutations
 
 
+
+class ErikurProletarian:
+    """Klass av riktiga proletärer.
+        Klass mot klass! """
+
+    def __init__(self, game_info: dict) -> None:
+        if not isinstance(game_info, dict):   # Kontrollera att det är en dict
+            raise ValueError("Ogiltig 'game_info.")
+
+        try: # Testa om rätt keys finns
+            self._truck = CyberTruck(game_info["vehicle"])
+            self._not_loaded_packages =  [Package(p) for p in game_info["dimensions"]]
+        except KeyError:
+                raise ValueError("Ogiltig 'game_info.")  
+
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
+    
+    def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
+        i = 1 # initera i ifall start = 0
+        for i in range(start, 0, -1): # Kör tills paketet når väggen
+            # Sätt startvärden
+            if direction == 'x':
+                x1 = i-1
+                x2 = i 
+            elif direction == 'y':
+                y1 = i-1
+                y2 = i
+            elif direction == 'z':
+                z1 = i-1
+                z2 = i
+            else:
+                print("Ogiltig direction!")
+                exit()    
+
+            # Kolla om paketet stöter i annat paket och
+            if not self._truck.is_space_empty(x1, y1, z1, x2, y2, z2):
+                i += 1
+                break
+        return (i - 1, i - 1 + dim )
+
+
+    def stow_truck(self) -> list:
+        """Stuva bilen riktig bra"""
+        tr = self._truck
+        packing_list = self._not_loaded_packages
+        
+        for p in packing_list:
+            
+          
+            # Lägg in paketet på flaket
+
+            if len(tr.loaded_packages):  # Kolla om det redan finns paket på flaket annars lägg direkt på (0, 0, 0)
+                
+                placements = []
+                for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
+                    x1 , y1 , z1  = np.where(tr.occu_space == -1,)   # Hitta första tomma positionen
+                    if p.heavy and z1 : # kontrollera om tungt paket  och om z > 0
+                       continue
+                    x2 = x1 + x_dim
+                    y2 = y1 + y_dim
+                    z2 = z1 + z_dim
+                    
+
+                    # TODO metod does_package_fit -> CyberTruck
+        
+                    placement_ok = True # Så bra då 
+                    
+
+                    # Prova att placera paket
+                    tr.place_package(p, x1, y1, z1, x2, y2, z2)
+                    if placement_ok:    # Spara alternativ i lista om okej
+                        placements.append({ "occupied volume" : tr.occu_volume,
+                                            "coordinates" : (x1, y1, z1, x2, y2, z2)})
+                    tr.remomve_package(p) # Avlägsna paket igen
+
+            
+                # TODO bättre urval av bästa plats
+
+                if not placements: #Kontrollera att det finns en giltig placering
+                    print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
+                    print("Paketet får ej i lastbilen.")
+                    exit()
+                
+                placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
+                #print(placements)
+            else: # lägg första paketet direkt på (0, 0, 0) längsta längden i x-led
+                placements = [{ "occupied volume" : None, "coordinates" : (0, 0, 0, p.dimensions[2], p.dimensions[1], p.dimensions[0])}]
+
+            # placera paket på vald bästa placering
+            x1, y1, z1, x2, y2, z2 = placements[0]["coordinates"]
+            tr.place_package(p, x1, y1, z1, x2, y2, z2)
+            
+
+            print("\n", len(tr.loaded_packages), "paket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ")
+
+            #self._not_loaded_packages.pop(0) # TODO fungerar inte i en forloop
+            #packing_list.pop(0)
+      
+        print("Packat o klart!") 
+        
+        # Formatera solution TODO gör till metod
+        solution =[]
+        for p in tr.loaded_packages:
+            solution.append({   'id': p.id,   
+                                'x1': p.x18[0], 'x2': p.x18[1], 'x3': p.x18[2], 'x4': p.x18[3], 'x5': p.x18[4], 'x6': p.x18[5], 'x7': p.x18[6], 'x8': p.x18[7], 
+                                'y1': p.y18[0], 'y2': p.y18[1], 'y3': p.y18[2], 'y4': p.y18[3], 'y5': p.y18[4], 'y6': p.y18[5], 'y7': p.y18[6], 'y8': p.y18[7],
+                                'z1': p.z18[0], 'z2': p.z18[1], 'z3': p.z18[2], 'z4': p.z18[3], 'z5': p.z18[4], 'z6': p.z18[5], 'z7': p.z18[6], 'z8': p.z18[7],
+                                'weightClass': p.weight_class, 'orderClass': p.order_class})
+        
+        
+        return solution
+
+
+
+
+
+
+
+
+
 class ErikurStower:
     """Klass för riktiga stuveriarbetare"""
 
