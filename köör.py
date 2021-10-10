@@ -21,9 +21,18 @@ print("***")
 #print("\npaket x", el._truck.loaded_packages[-3].x18)
 #print("paket y", el._truck.loaded_packages[-3].y18)
 #print("paket z", el._truck.loaded_packages[-3].z18)
+print(el._truck.loaded_packages[25].weight_class)
+print(el._truck.loaded_packages[25].heavy)
+#print('\n', s[40])
 
+
+
+#p = el._truck.loaded_packages[0]
 #print(el._truck.free_length)
-
+#print(el._truck.occu_space[np.where(el._truck.occu_space == p.id)])
+#print(el._truck.remomve_package(p)) 
+#print(el._truck.occu_space[0:10, 0:10, 0:10])
+#print(np.where(el._truck.occu_space == p.id))
 #exit()
 #p = Package({'id': 0, 'width': 59, 'length': 58, 'height': 25, 'weightClass': 2, 'orderClass': 1})
 #print(p.order_class)
@@ -32,15 +41,21 @@ print("***")
 
 #cb = CyberTruck({'length': 200, 'width': 150, 'height': 136})
 #cb.occu_space[25, 25, -3] = 1
-#cb.occu_space[0:10, 0:10,  0:10] = 1
+#cb.occu_space[0:10, 0:1,  0:1] = 5
 #cb.free_length
 
 #print(cb.occu_space.shape, cb.occu_space.ndim, cb.occu_space.size)
 #print(np.sum(cb.occu_space), cb.volume)
-#print(cb.occu_volume)
+#print('1', cb.occu_volume)
 
+#print('2', np.count_nonzero(cb.occu_space +1))
+#print('3', np.nonzero(np.count_nonzero(cb.occu_space +1)))
+#print('4', np.max(np.nonzero(np.count_nonzero(cb.occu_space +1))))
 #print(cb.occu_space.shape[0] - np.max(np.nonzero(np.count_nonzero(cb.occu_space +1, axis=(1,2)))) - 1)
 #print( cb.free_length)
 
 #print(np.count_nonzero(cb.occu_space[0:100, 0:50, -2:-1] +1) == 0)
 #print(cb.is_space_empty(0, 0, -2, 100, 50, -1))
+#print(cb.occu_space[0:11, 0:3, 0:3])
+
+#np.where()

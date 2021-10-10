@@ -3,6 +3,7 @@ import numpy as np
 from typing import Type
 from itertools import permutations
 
+
 class ErikurStower:
     """Klass för riktiga stuveriarbetare"""
 
@@ -32,13 +33,14 @@ class ErikurStower:
         #tr.occu_space[199, 0, 130] = 1
         for p in packing_list:
             
-            print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
+            #print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
             # Lägg in paketet på flaket
+                        
+            # TODO Försök pussla in paket i luckor
+            
             placements = []
-
             for x_dim, y_dim, z_dim in permutations([0, 1, 2], 3):  # För alla vridningar på paketet
-                placement_ok = True
-
+                
                 y1 = tr.width - p.dimensions[y_dim]
                 y2 = tr.width
                 if p.heavy: 
@@ -56,50 +58,81 @@ class ErikurStower:
                     if not tr.is_space_empty(x1, y1, z1, x2, y2, z2):
                         i += 1
                         break
-
-                x1, x2 = i-1, i -1 + p.dimensions[x_dim] 
-
-                if x2 > tr.length:
+                x1, x2 = i - 1, i - 1 + p.dimensions[x_dim] 
+ 
+                
+                if x2 <= tr.length: # Kontollera om bakgaveln går att stänga
+                    placement_ok = True
+                else:
                     placement_ok = False
-                    print("Paketet är helt eller delvis utanför lastutrymmet")
+                    #print("Paketet är helt eller delvis utanför lastutrymmet")
+    
 
                 # y-led
-                for i in range(tr.width, 0, -1):
+                for i in range(y1, 0, -1):
                     y1 = i-1
                     y2 = i
                     if not tr.is_space_empty(x1, y1, z1, x2, y2, z2):
                         i += 1
                         break
-
                 y1, y2 = i - 1, i - 1 + p.dimensions[y_dim]
 
-                # z-led
-                for i in range(tr.length, 0, -1):
-                    z1 = i-1
-                    z2 = i
-                    if not tr.is_space_empty(x1, y1, z1, x2, y2, z2):
-                        i += 1
-                        break
 
-                z1, z2 = i - 1, i - 1 + p.dimensions[z_dim]
-                
-                placements.append([x1, y1, z1, x2, y2, z2])
-                
-                
+                # z-led
+                if not p.heavy:
+                    for i in range(z1, 0, -1):
+                        z1 = i-1
+                        z2 = i
+                        if not tr.is_space_empty(x1, y1, z1, x2, y2, z2):
+                            i += 1
+                            break
+                    z1, z2 = i - 1, i - 1 + p.dimensions[z_dim]
+
+                # Prova att placera paket
+                tr.place_package(p, x1, y1, z1, x2, y2, z2)
+                if placement_ok:    # Spara alternativ i lista om okej
+                    placements.append({ "occupied volume" : tr.occu_volume,
+                                        "coordinates" : (x1, y1, z1, x2, y2, z2)})
+                tr.remomve_package(p) # Avlägsna paket igen
+
+           
+                  
 
             # TODO välj vilken placering som är bäst
+            if not placements: #Kontrollera att det finns en giltig placering
+                print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
+                print("Paketet får ej i lastbilen.")
+                exit()
             
+            placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
+            #print(placements) 
+            x1, y1, z1, x2, y2, z2 = placements[0]["coordinates"]
             tr.place_package(p, x1, y1, z1, x2, y2, z2)
-            print(tr.occu_volume) 
-            #print(tr.free_length) 
+            #print(tr.occu_volume) 
+
+            print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ")
+
             #self._not_loaded_packages.pop(0) # TODO fungerar inte i en forloop
             #packing_list.pop(0)
             #print([packing_list[i].id for i in range(0,len(packing_list))])
         #print([packing_list[i].id for i in range(0,len(packing_list))])
-        print(tr.free_length) 
-        return "Asgrymt packat"
+        print("Packat o klart!") 
+        
+        # Formatera solution
+        #print[(tr.loaded_packages)]
+        solution =[]
+        for p in tr.loaded_packages:
+            solution.append({   'id': p.id,   
+                                'x1': p.x18[0], 'x2': p.x18[1], 'x3': p.x18[2], 'x4': p.x18[3], 'x5': p.x18[4], 'x6': p.x18[5], 'x7': p.x18[6], 'x8': p.x18[7], 
+                                'y1': p.y18[0], 'y2': p.y18[1], 'y3': p.y18[2], 'y4': p.y18[3], 'y5': p.y18[4], 'y6': p.y18[5], 'y7': p.y18[6], 'y8': p.y18[7],
+                                'z1': p.z18[0], 'z2': p.z18[1], 'z3': p.z18[2], 'z4': p.z18[3], 'z5': p.z18[4], 'z6': p.z18[5], 'z7': p.z18[6], 'z8': p.z18[7],
+                                'weightClass': p.weight_class, 'orderClass': p.order_class})
+        
+        
+        return solution
 
 
+ 
 
 
 class CyberTruck:
@@ -144,7 +177,7 @@ class CyberTruck:
 
     @occu_space.setter
     def occu_space(self, val) -> None:
-        if isinstance(val, np.ndarray):
+        if isinstance(val, np.ndarray): 
             self._occu_space = val
         else:
             raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
@@ -153,7 +186,7 @@ class CyberTruck:
     def occu_volume(self) -> int:
         if not np.count_nonzero(self.occu_space +1): # Räknar alla platser skillda från noll. +1  sätter alla lediga platser till 0.
             return 0
-        return ((np.max(np.nonzero(np.count_nonzero(self.occu_space +1, axis=(0,1)))) + 1) *
+        return ((np.max(np.nonzero(np.count_nonzero(self.occu_space +1, axis=(0,1)))) + 1) * # + 1 för att få längden inte index 
                 (np.max(np.nonzero(np.count_nonzero(self.occu_space +1, axis=(0,2)))) + 1) *
                 (np.max(np.nonzero(np.count_nonzero(self.occu_space +1, axis=(1,2)))) + 1))
 
@@ -187,6 +220,21 @@ class CyberTruck:
         package.y18 = [y1 for _ in range(0, 4)] + [y2 for _ in range(4, 8)]
         package.z18 = [z1 for _ in range(0, 4)] + [z2 for _ in range(4, 8)]
         package.loaded_on_truck = True
+
+    def remomve_package(self, package: "Package") -> tuple:
+        """Avlägnar redan placerat paket"""
+        
+        #print(el._truck.occu_space[np.where(el._truck == p.id)])
+        self.occu_space[np.where(self.occu_space == package.id)] = -1 # Reservera utrymme i lastutrymmet
+        self.loaded_packages.pop(self.loaded_packages.index(package)) # <--------------------------------------------rätt nu?
+
+        # paketet   
+        package.x18 = [0 for _ in range(0, 8)]
+        package.y18 = [0 for _ in range(0, 8)]
+        package.z18 = [0 for _ in range(0, 8)]
+        package.loaded_on_truck = False
+
+        return(package.x18[0] , package.y18[0] , package.z18[0], package.x18[-1], package.y18[-1], package.z18[-1])     
 
 
 

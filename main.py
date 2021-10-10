@@ -44,7 +44,8 @@ def solution_to_file(solution, path):
 		f_ut.write(str(solution) + '\n'*2)
 		f_ut.write("**************************" + '\n'*2)
 			
-		for p in solution:
+		for i, p in enumerate(solution):
+			f_ut.write(f"{i}\n")
 			for k, v in p.items():
 				#print(f"\t{k} : {v}")
 				f_ut.write(f"\t{k} : {v}\n")
@@ -69,12 +70,12 @@ def main():
 	print("Starting game...")
 	response = api.new_game(api_key, map_name)  # Indata från api
 	
-	greedy = GreedySolver(game_info=response)   # <----- Dessa två rader räcker för att testa
-	solution = greedy.Solve()					# Utdata från lösaren
-	#erikur = ErikurStower(response)
-	#solution = erikur.stow_truck()
+	#greedy = GreedySolver(game_info=response)   # <----- Dessa två rader räcker för att testa
+	#solution = greedy.Solve()					# Utdata från lösaren
+	erikur = ErikurStower(response)
+	solution = erikur.stow_truck()
 
-	#print(solution)
+	print('\n', solution[40])
 	#exit()
 
 #	
@@ -85,8 +86,8 @@ def main():
 	# Filnamn
 	#path_in = "files/indata_training1.txt"
 	#path_ut = "files/utdata_training1_og.txt"
-	path_in = "apa1.txt"
-	path_ut = "apa2.txt"	
+	path_in = "el1.txt"
+	path_ut = "el2.txt"	
 
 	path_in = r"C:/Users/ErikLarsson-AIU21GBG/Documents/GitHub/considition/files/" + path_in  #"files/indata_training2.txt"
 	path_ut = r"C:/Users/ErikLarsson-AIU21GBG/Documents/GitHub/considition/files/" + path_ut #"files/utdata_training2_og.txt"
@@ -95,6 +96,7 @@ def main():
 	response_to_file(response, path_in)
 	solution_to_file(solution, path_ut)
 
+	"""
 	# Beräkna volymer 
 	# totalPackageVolume
 	tot_paket_volym = packages_total_volume(response)
@@ -139,16 +141,16 @@ def main():
 							"orderClass": solution_0[-1]["orderClass"]}) 
 
 
+	"""
+	#Skicka in lösning för bedömning
+	submit_game_response = api.submit_game(api_key, map_name, solution)
+	print(submit_game_response, 1)
 
-			#Skicka in lösning för bedömning
-			submit_game_response = api.submit_game(api_key, map_name, solution)
-			print(submit_game_response, 1)
-
-			if submit_game_response != None:
+	'''		if submit_game_response != None:
 				print(xy)
 				godkanda += 1
 
-	print(godkanda, ' / ',  i)		
+	print(godkanda, ' / ',  i)	'''	
 
 
 
