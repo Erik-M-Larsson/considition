@@ -59,13 +59,15 @@ class ErikurProletarian:
                 
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
-                    
+                    if x_dim <= 0 or y_dim < 0 or z_dim < 0: 
+                            raise ValueError(f"x1, y1, z1 kan inte vara < 0 1'({x1}, {y1}, {z1})'")
                     # Hitta första tomma positionen där paketet passar
                     x , y , z =  np.where(tr.occu_space == -1)
-                   
+                
                     for x1 , y1 , z1 in  zip(x, y, z): 
                         x1, y1, z1 = int(x1), int(y1), int(z1)
-
+                        #if x1 < 0 or y1 < 0 or z1 < 0: 
+                        #    raise ValueError(f"x1, y1, z1 kan inte vara < 0 '({x1}, {y1}, {z1})'")
                         if p.heavy and z1 : continue # kontrollera om tungt paket och om z > 0  
                         x2 = x1 + x_dim
                         if x2 > tr.length: continue # Kontrollera att paket innanför lastbil
@@ -73,18 +75,24 @@ class ErikurProletarian:
                         if y2 > tr.width: continue
                         z2 = z1 + z_dim
                         if z2 > tr.height: continue
+
+                        #if x2-x1 <= 0 or y2-y1 <= 0 or z2-z1 <= 0:
+                        #    raise ValueError(f"Paketet kan inte ha negativa sidlängder 1'({x2-x1}, {y2-y1}, {z2-z1})'")
                         
                         placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
                         if placement_ok:
                             break
-            
-                    #x1, y1, z1 = int(x1), int(y1), int(z1)
-                    #x2, y2, z2 = int(x2), int(y2), int(z2) 
                     
+                    #if x_dim <= 0 or y_dim < 0 or z_dim < 0: 
+                    #        raise ValueError(f"x1, y1, z1 kan inte vara < 0 2'({x1}, {y1}, {z1})'")
+                    #if x2-x1 <= 0 or y2-y1 <= 0 or z2-z1 <= 0:
+                     #   raise ValueError(f"Paketet kan inte ha negativa sidlängder 2'({x2-x1}, {y2-y1}, {z2-z1})'")
+
                     # Prova att placera paket
-                    tr.place_package(p, x1, y1, z1, x2, y2, z2)
-                    placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
-                    tr.remomve_package(p) # Avlägsna paket igen
+                    if placement_ok:
+                        tr.place_package(p, x1, y1, z1, x2, y2, z2)
+                        placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
+                        tr.remomve_package(p) # Avlägsna paket igen
             
                 # TODO bättre urval av bästa plats
 
