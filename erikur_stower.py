@@ -52,41 +52,45 @@ class ErikurProletarian:
         tr = self._truck
         packing_list = self._not_loaded_packages
         
-        for p in packing_list:
+        for p in packing_list: # För varje paket
             
-          
             # Lägg in paketet på flaket
-
-            if len(tr.loaded_packages):  # Kolla om det redan finns paket på flaket annars lägg direkt på (0, 0, 0)
+            if len(tr.loaded_packages):  # Kolla om det redan finns paket   på flaket annars lägg direkt på (0, 0, 0)
                 
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
-                    x1 , y1 , z1  = np.where(tr.occu_space == -1,)   # Hitta första tomma positionen
-                    if p.heavy and z1 : # kontrollera om tungt paket  och om z > 0
-                       continue
-                    x2 = x1 + x_dim
-                    y2 = y1 + y_dim
-                    z2 = z1 + z_dim
                     
+                    # Hitta första tomma positionen där paketet passar
+                    x , y , z =  np.where(tr.occu_space == -1)
+                   
+                    for x1 , y1 , z1 in  zip(x, y, z): 
+                        x1, y1, z1 = int(x1), int(y1), int(z1)
 
-                    # TODO metod does_package_fit -> CyberTruck
-        
-                    placement_ok = True # Så bra då 
+                        if p.heavy and z1 : continue # kontrollera om tungt paket och om z > 0  
+                        x2 = x1 + x_dim
+                        if x2 > tr.length: continue # Kontrollera att paket innanför lastbil
+                        y2 = y1 + y_dim
+                        if y2 > tr.width: continue
+                        z2 = z1 + z_dim
+                        if z2 > tr.height: continue
+                        
+                        placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
+                        if placement_ok:
+                            break
+            
+                    #x1, y1, z1 = int(x1), int(y1), int(z1)
+                    #x2, y2, z2 = int(x2), int(y2), int(z2) 
                     
-
                     # Prova att placera paket
                     tr.place_package(p, x1, y1, z1, x2, y2, z2)
-                    if placement_ok:    # Spara alternativ i lista om okej
-                        placements.append({ "occupied volume" : tr.occu_volume,
-                                            "coordinates" : (x1, y1, z1, x2, y2, z2)})
+                    placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
                     tr.remomve_package(p) # Avlägsna paket igen
-
             
                 # TODO bättre urval av bästa plats
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
-                    print("Paketet får ej i lastbilen.")
+                    print("Paketet får ej plats i fordonet.")
                     exit()
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
@@ -284,7 +288,6 @@ class CyberTruck:
         self.loaded_packages =[]
         
 
-
         
     @property
     def length(self) -> int:
@@ -459,7 +462,7 @@ class Package:
             raise TypeError("Lista koordinater ska vara av typen list")
         for v in val:
             if not isinstance(v, int):
-                raise TypeError("Kooerdinaterna måste vara int")
+                raise TypeError(f"Kooerdinaterna måste vara int inte {type(val)}")
             if v < 0:
                 raise ValueError("Koordinare kan inte vara negativa")    
 
