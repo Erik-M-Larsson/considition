@@ -7,7 +7,7 @@ r = {'mapName': 'training1', 'vehicle': {'length': 200, 'width': 150, 'height': 
 r2 = {'mapName': 'training2', 'vehicle': {'length': 240, 'width': 80, 'height': 100}, 'dimensions': [{'id': 0, 'width': 46, 'length': 66, 'height': 24, 'weightClass': 1, 'orderClass': 4}, {'id': 1, 'width': 42, 'length': 41, 'height': 30, 'weightClass': 1, 'orderClass': 4}, {'id': 2, 'width': 36, 'length': 58, 'height': 18, 'weightClass': 2, 'orderClass': 4}, {'id': 3, 'width': 35, 'length': 49, 'height': 22, 'weightClass': 1, 'orderClass': 0}, {'id': 4, 'width': 51, 'length': 66, 'height': 27, 'weightClass': 2, 'orderClass': 3}, {'id': 5, 'width': 59, 'length': 59, 'height': 25, 'weightClass': 1, 'orderClass': 3}, {'id': 6, 'width': 67, 'length': 54, 'height': 23, 'weightClass': 2, 'orderClass': 1}, {'id': 7, 'width': 56, 'length': 40, 'height': 27, 'weightClass': 1, 'orderClass': 3}, {'id': 8, 'width': 55, 'length': 61, 'height': 27, 'weightClass': 1, 'orderClass': 0}, {'id': 9, 'width': 56, 'length': 44, 'height': 25, 'weightClass': 0, 'orderClass': 2}, {'id': 10, 'width': 63, 'length': 42, 'height': 33, 'weightClass': 2, 'orderClass': 0}, {'id': 11, 'width': 63, 'length': 51, 'height': 34, 'weightClass': 1, 'orderClass': 2}, {'id': 12, 'width': 26, 'length': 47, 'height': 17, 'weightClass': 2, 'orderClass': 4}, {'id': 13, 'width': 25, 'length': 42, 'height': 9, 'weightClass': 0, 'orderClass': 3}, {'id': 14, 'width': 19, 'length': 40, 'height': 12, 'weightClass': 1, 'orderClass': 4}, {'id': 15, 'width': 24, 'length': 33, 'height': 14, 'weightClass': 0, 'orderClass': 1}, {'id': 16, 'width': 27, 'length': 43, 'height': 10, 'weightClass': 1, 'orderClass': 4}, {'id': 17, 'width': 29, 'length': 39, 'height': 19, 'weightClass': 0, 'orderClass': 4}, {'id': 18, 'width': 27, 'length': 37, 'height': 19, 'weightClass': 0, 'orderClass': 3}, {'id': 19, 'width': 21, 'length': 49, 'height': 11, 'weightClass': 1, 'orderClass': 2}, {'id': 20, 'width': 17, 'length': 39, 'height': 19, 'weightClass': 1, 'orderClass': 2}, {'id': 21, 'width': 29, 'length': 44, 'height': 10, 'weightClass': 2, 'orderClass': 3}, {'id': 22, 'width': 25, 'length': 42, 'height': 25, 'weightClass': 1, 'orderClass': 0}, {'id': 23, 'width': 20, 'length': 39, 'height': 14, 'weightClass': 2, 'orderClass': 1}, {'id': 24, 'width': 18, 'length': 50, 'height': 12, 'weightClass': 1, 'orderClass': 0}, {'id': 25, 'width': 30, 'length': 42, 'height': 10, 'weightClass': 0, 'orderClass': 1}, {'id': 26, 'width': 33, 'length': 39, 'height': 22, 'weightClass': 1, 'orderClass': 3}, {'id': 27, 'width': 18, 'length': 41, 'height': 12, 'weightClass': 1, 'orderClass': 2}, {'id': 28, 'width': 32, 'length': 40, 'height': 21, 'weightClass': 1, 'orderClass': 3}, {'id': 29, 'width': 20, 'length': 40, 'height': 13, 'weightClass': 1, 'orderClass': 4}, {'id': 30, 'width': 21, 'length': 38, 'height': 10, 'weightClass': 1, 'orderClass': 3}, {'id': 31, 'width': 24, 'length': 32, 'height': 5, 'weightClass': 2, 'orderClass': 0}, {'id': 32, 'width': 23, 'length': 39, 'height': 8, 'weightClass': 1, 'orderClass': 4}, {'id': 33, 'width': 23, 'length': 32, 'height': 15, 'weightClass': 2, 'orderClass': 1}, {'id': 34, 'width': 24, 'length': 47, 'height': 14, 'weightClass': 0, 'orderClass': 1}, {'id': 35, 'width': 20, 'length': 49, 'height': 13, 'weightClass': 0, 'orderClass': 1}, {'id': 36, 'width': 24, 'length': 45, 'height': 7, 'weightClass': 1, 'orderClass': 2}, {'id': 37, 'width': 25, 'length': 33, 'height': 19, 'weightClass': 1, 'orderClass': 1}, {'id': 38, 'width': 19, 'length': 34, 'height': 15, 'weightClass': 0, 'orderClass': 2}, {'id': 39, 'width': 25, 'length': 37, 'height': 10, 'weightClass': 1, 'orderClass': 4}]}
 
 #el = ErikurStower(r)
-el = ErikurProletarian(r)
+el = ErikurProletarian(r2)
 s = el.stow_truck()
 #print(el)
 #print(np.where(el._truck.occu_space == -1))
@@ -42,9 +42,9 @@ print("***")
 #print(p.dimensions)
 #print(p.volume)
 
-#cb = CyberTruck({'length': 10, 'width': 7, 'height': 6})
-#cb.occu_space[0:5, 0:4, 0:5] = 3
-#cb.occu_space[5:10, 4:7,  0:5] = 5
+cb = CyberTruck({'length': 10, 'width': 7, 'height': 6})
+cb.occu_space[0:5, 0:4, 0:5] = 3
+cb.occu_space[5:10, 4:7,  0:5] = 5
 #cb.free_length
 
 #print(cb.occu_space.shape, cb.occu_space.ndim, cb.occu_space.size)
@@ -69,3 +69,12 @@ print("***")
 #for i in range(0,50):
 #    cb.occu_space[x[i], y[i], z[i]] = i + 11
 #print(cb.occu_space)
+x_1, y_1, z_1 =  np.where(cb.occu_space[0 : 10, 0 : 7, 0 : 6 ] == -1)
+
+#print(el._truck.height)
+#for x, y, z  in zip(x_1[0:100], y_1[0:100], z_1[0:100]):   
+print(x_1[0:35])
+    #print('')
+print(y_1[0:35])
+    #print('')
+print(z_1[0:35])
