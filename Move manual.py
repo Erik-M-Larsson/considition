@@ -4,7 +4,7 @@ api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"
 map_name = "training2"
 
 
-# Filnamn
+# Filnamn 
 path = "prol_tr2_s.txt"	
 path = r"C:/Users/ErikLarsson-AIU21GBG/Documents/GitHub/considition/files/" + path
 
@@ -23,6 +23,8 @@ with open(path, 'r') as f:
 				f_ut.write(f"\t{k} : {v}\n")
 			#print('')	
 			f_ut.write('\n')'''
+    solution = 1
+
 
 #Skicka in lösning för bedömning
 submit_game_response = api.submit_game(api_key, map_name, solution)
