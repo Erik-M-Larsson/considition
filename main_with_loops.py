@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from leet import ErikurStower
+from Training1_max import ErikurStower
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
@@ -23,7 +23,7 @@ def main():
 	
 	
 	solution =[]
-	for i in range(6):
+	for i in range(1):
 		erikur = ErikurStower(response)
 		try:
 			solution.append(erikur.stow_truck())

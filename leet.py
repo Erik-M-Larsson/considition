@@ -152,16 +152,15 @@ class ErikurStower:
 
     
         #shuffle(self._not_loaded_packages)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.id), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.id), reverse = False)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
 
         random_index = randint(0,56)
         random_index_2 = randint(0,56)
-        self._not_loaded_packages[36], self._not_loaded_packages[38]=self._not_loaded_packages[38], self._not_loaded_packages[36]
-        self._not_loaded_packages[36], self._not_loaded_packages[39]=self._not_loaded_packages[39], self._not_loaded_packages[36]
-        self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+2]=self._not_loaded_packages[random_index+2], self._not_loaded_packages[random_index]
-        self._not_loaded_packages[random_index_2], self._not_loaded_packages[random_index_2+3]=self._not_loaded_packages[random_index_2+3], self._not_loaded_packages[random_index_2]
+
+        #self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+2]=self._not_loaded_packages[random_index+2], self._not_loaded_packages[random_index]
+        #self._not_loaded_packages[random_index_2], self._not_loaded_packages[random_index_2+3]=self._not_loaded_packages[random_index_2+3], self._not_loaded_packages[random_index_2]
         
         print(random_index)
         print(random_index_2)
@@ -214,7 +213,7 @@ class ErikurStower:
                     x1 = tr.length
                     y1 = tr.width - p.dimensions[y_dim] # Längst till vänster
                     y2 = tr.width   
-                    if p.heavy: # kontrollera om tungt paket välj startvärde z. På golvet
+                    if not p.heavy: # kontrollera om tungt paket välj startvärde z. På golvet
                         z1 = 0                      
                         z2 = p.dimensions[z_dim]
                     else: # högst upp vid taket
