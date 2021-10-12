@@ -48,7 +48,7 @@ class ErikurStower():
             if not self._truck.is_space_empty(x1, y1, z1, x2, y2, z2):
                 i += 1
                 break
-        return (i - 1, i - 1 + dim )
+        return (i-1 , i-1 + dim )
 
     def format_solution(self) -> list:
         solution =[]
@@ -63,15 +63,15 @@ class ErikurStower():
     def package_behind(self, p: "Package", x1: int , y1: int , z1: int, x2: int, y2: int, z2: int) -> bool:
         """Kontrollera om det finns paket framför med högre order"""
         o_space = self._truck.occu_space[x2:self._truck.length, y1:y2, z1:z2] # Volym från paket till bakgavel
-        p_behind =set(self._truck.occu_space[np.nonzero(o_space+1)]) # Hitta alla unika värden på paket bakom
-        print("Framför", p_behind )
+        p_behind =set(self._truck.occu_space[x2:self._truck.length, y1:y2, z1:z2][np.nonzero(o_space+1)]) # Hitta alla unika värden på paket bakom
         
-        self._truck.loaded_packages["id"]
-        
-        for p_b in p_behind:
-            if  p_b  
+        order_class_loaded_p = { l_p.id : l_p.order_class for l_p in self._truck.loaded_packages}   # För snabbhet borde detta inte ligga i metoden
 
-        return 1
+        for p_b in p_behind:
+            if  order_class_loaded_p[p_b] > p.order_class:
+                return True
+
+        return False
         
 
 
@@ -344,28 +344,29 @@ class ErikurStower():
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
                   
-                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length-x_dim, 0 : tr.width-y_dim, 0 : tr.height-z_dim if not p.heavy else 1] )
+                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
                     x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
                         x1, y1, z1, x2, y2, z2 = int(x1), int(y1), int(z1), int(x2), int(y2), int(z2) # Få rätt typ för annars får Python spatt
                         n_iter += 1    
                     
-                        xo, yo, zo = -1, -1, -1
+                        xo, yo, zo, = -1, -1, -1
                         while  (x1, y1, z1) != (xo, yo, zo):
                             xo, yo, zo = x1, y1, z1 # spara värden fån föregående iterration
                             z1, z2 = self.push_package('z', start=z1, dim=z_dim, x1=x1, x2=x2, y1=y1, y2=y2)
-                            x1, x2 = self.push_package('x', start=x1, dim=x_dim,  y1=y1, y2=y2, z1=z1, z2=z2)
-                            y1, y2 = self.push_package('y', start=y1, dim=y_dim,  x1=y1, x2=y2, z1=z1, z2=z2) # Bättre med eller utan?
-
-                        placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
+                            x1, x2 = self.push_package('x', start=x1, dim=x_dim, y1=y1, y2=y2, z1=z1, z2=z2)
+                            y1, y2 = self.push_package('y', start=y1, dim=y_dim, x1=x1, x2=x2, z1=z1, z2=z2) # Funkar inte, varför?
+                            
+                        if not ((x2 <= tr.length) and (y2 <= tr.width) and (z2 < tr.height)): # Kolla så paketet inte är utanför
+                            continue
+                        
+                        placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2) # Kolla att det är tomt
 
                         # Kontrollera om paket med högre order framför
+                        p_b = self.package_behind(p,x1 , y1 , z1, x2, y2, z2)
 
-                        self.package_behind(p,x1 , y1 , z1, x2, y2, z2)
-
-
-                        if placement_ok:
+                        if placement_ok and not p_b:
                             break
                         #else:
                             #print("ej ok")
@@ -397,11 +398,12 @@ class ErikurStower():
            
           
         print("Packat o klart!") 
-        print(n_iter)
+        print("Iteration: ", n_iter)
         # Formatera solution 
         solution = self.format_solution()
         stop = timeit.default_timer()
-        print((stop-start)//60, (stop-start)%60) 
+        print(f"Time {(stop-start)//60:f0}:{(stop-start)%60:f0}" )
+
         return solution
             
       
