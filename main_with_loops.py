@@ -23,7 +23,7 @@ def main():
 	
 	
 	solution =[]
-	for i in range(1):
+	for i in range(6):
 		erikur = ErikurStower(response)
 		try:
 			solution.append(erikur.stow_truck())

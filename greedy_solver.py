@@ -19,7 +19,7 @@ class GreedySolver:
         self.vehicle_height = game_info["vehicle"]["height"]
         self.packages = game_info["dimensions"]                 # Lista med dictionary för varje pkt           
        
-        """for package in self.packages:                           # För alla paket
+        for package in self.packages:                           # För alla paket
             #if(package["height"] > self.lastKnownMaxHeight and package["weightClass"] == 2 ):
             if(package["height"] and package["weightClass"] == 2 > self.lastKnownMaxHeight):
                 self.lastKnownMaxHeight = package["height"]
@@ -35,7 +35,7 @@ class GreedySolver:
             self.otherPackages, key=lambda i: (i['area']))
         
         print(self.heavyPackages)
-        print(self.otherPackages)"""
+        print(self.otherPackages)
 
         for package in self.packages: 
             package["volume"] = package["width"] * package["length"] * package["height"]
