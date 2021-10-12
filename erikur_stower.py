@@ -26,7 +26,7 @@ class Worker:
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
 
-    def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
+    def push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         i = 1 # initera i ifall start = 0
         for i in range(start, 0, -1): # Kör tills paketet når väggen
             # Sätt startvärden
@@ -135,8 +135,18 @@ class ForkliftOperator(Worker):
             
             mid_time = timeit.default_timer()
             print("\n", len(tr.loaded_packages), "paket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ", "n =", n_iter, "time:", mid_time-start)
-           
+
+
+        print("Packat o klart!") 
+        print(n_iter)
+        # Formatera solution 
+        solution = self.format_solution()
+        stop = timeit.default_timer()
+        print((stop-start)//60, (stop-start)%60) 
+        return solution           
     
+
+
     def load_faster(self) -> list:
         """Lasta bilen"""
         start = timeit.default_timer()
@@ -153,22 +163,36 @@ class ForkliftOperator(Worker):
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
                     #if x_dim <= 0 or y_dim < 0 or z_dim < 0:                                            
                     #     raise ValueError(f"x1, y1, z1 kan inte vara < 0 1'({x1}, {y1}, {z1})'")
-                     
+                    #print("\n***\n")
+                    #print("dim ", x_dim, y_dim, z_dim)
                     # Hitta första tomma positionen där paketet passar
-                    print(np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] ))
+                    #print("alla hörn", np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height] ))
+                    #print("hörn", np.nonzero(tr.free_corners[0 : (tr.length-x_dim), 0 : (tr.width-y_dim), 0 : (tr.height-z_dim if not p.heavy else 1)] ))
                     x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length-x_dim, 0 : tr.width-y_dim, 0 : tr.height-z_dim if not p.heavy else 1] )
                     x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     #x_2, y_2, z_2 =x_1 +  np.array([x_dim]), y_1 + np.array([y_dim]), z1 + np.array([z_dim]) #x_1, y_1, z_1 
-                    print(x_1, y1, z_1)
+                    #print("x y z",x_1, y_1, z_1)
                     #print(x_1, y_1, z_1)
                     #print(x_2, y_2, z_2)
+                    
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
                         x1, y1, z1, x2, y2, z2 = int(x1), int(y1), int(z1), int(x2), int(y2), int(z2) # Få rätt typ för annars får Python spatt
                         n_iter += 1    
                         #print('T2')
+                        #print("x y z",x1, y1, z1, x2, y2, z2)
+                        #print("id ", tr.occu_space[x1:x2, y1:y2, z1:z2])
+                        z1, z2 = self.push_package('z', start=z1, dim=z_dim, x1=x1, x2=x2, y1=y1, y2=y2)
+                        x1, x2 = self.push_package('x', start=x1, dim=x_dim,  y1=y1, y2=y2, z1=z1, z2=z2)
+                        # TODO push neg  y-led
+                        # TODO push pos  y-led ?
+                        #print("x y z",x1, y1, z1, x2, y2, z2)
+                        #print("id ", tr.occu_space[x1:x2, y1:y2, z1:z2])
+
                         placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
                         if placement_ok:
                             break
+                        #else:
+                            #print("ej ok")
                        
                             
                     
@@ -177,14 +201,14 @@ class ForkliftOperator(Worker):
                     #if x2-x1 <= 0 or y2-y1 <= 0 or z2-z1 <= 0:
                     #   raise ValueError(f"Paketet kan inte ha negativa sidlängder 2'({x2-x1}, {y2-y1}, {z2-z1})'")
                     #print("T3")
-                    
+
                     # Prova att placera paket
                     if placement_ok:
-                        tr.place_package(p, x1, y1, z1, x2, y2, z2) # TODO snyggare lösning på det här
+                        tr.occu_space[x1:x2, y1:y2, z1:z2] = -7 # Reservera ytrymmet 
                         placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
-                        tr.remomve_package(p) # Avlägsna paket igen
+                        tr.occu_space[x1:x2, y1:y2, z1:z2] = -1 # Avboka ytrymmet 
             
-                # TODO bättre urval av bästa plats
+                # TODO bättre urval av bästa plats <------------------------------------------------------------------------------------- OBS
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
@@ -203,8 +227,7 @@ class ForkliftOperator(Worker):
             mid_time = timeit.default_timer()
             print("\n", len(tr.loaded_packages), "paket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ", "n =", n_iter, "time:", mid_time-start)
            
-            
-      
+          
         print("Packat o klart!") 
         print(n_iter)
         # Formatera solution 
@@ -214,13 +237,7 @@ class ForkliftOperator(Worker):
         return solution
             
       
-        print("Packat o klart!") 
-        print(n_iter)
-        # Formatera solution 
-        solution = self.format_solution()
-        stop = timeit.default_timer()
-        print((stop-start)//60, (stop-start)%60) 
-        return solution
+
 
 
 
@@ -350,7 +367,7 @@ class ErikurStower(Worker):
                         xo, yo, zo = x1, y1, z1 # spara värden fån föregående iterration
                     
                         # Flytta in i x-led
-                        x1, x2 = self._push_package(direction='x', start=x1, dim=p.dimensions[x_dim], y1=y1, y2=y2, z1=z1, z2=z2)
+                        x1, x2 = self.push_package(direction='x', start=x1, dim=p.dimensions[x_dim], y1=y1, y2=y2, z1=z1, z2=z2)
 
                         if x2 <= tr.length: # Kontollera om bakgaveln går att stänga
                             placement_ok = True
@@ -359,11 +376,11 @@ class ErikurStower(Worker):
                             #print("Paketet är helt eller delvis utanför lastutrymmet")
         
                         # Flytta i y-led
-                        y1, y2 = self._push_package(direction='y', start=y1, dim=p.dimensions[y_dim], x1=x1, x2=x2, z1=z1, z2=z2)
+                        y1, y2 = self.push_package(direction='y', start=y1, dim=p.dimensions[y_dim], x1=x1, x2=x2, z1=z1, z2=z2)
                     
                         # Flytta i z-led
                         if not p.heavy:
-                            z1, z2 = self._push_package(direction='z', start=z1, dim=p.dimensions[z_dim], x1=x1, x2=x2, y1=y1, y2=y2)
+                            z1, z2 = self.push_package(direction='z', start=z1, dim=p.dimensions[z_dim], x1=x1, x2=x2, y1=y1, y2=y2)
 
                     # Prova att placera paket
                     tr.place_package(p, x1, y1, z1, x2, y2, z2)
@@ -425,8 +442,11 @@ class CyberTruck:
         self.occu_space = np.ones((self.length, self.width, self.height), np.int8) * -1  # -1 -> ledigt
         self.top_surface = np.zeros((self.length, self.width, self.height), bool)
         self.top_surface[:, :, 0] += True
+        
         self.free_corners = np.zeros((self.length, self.width, self.height), bool)
-        self.free_corners[0, 0, 0] = True
+        self.free_corners[0, 0, 0] = np.True_ 
+
+        self.loaded_packages =[]
         
 
         
@@ -460,7 +480,7 @@ class CyberTruck:
     @property
     def top_surface(self) -> np.ndarray:
         return self._top_surface   
-
+    
     @top_surface.setter
     def top_surface(self, val: np.ndarray) -> None:
         if isinstance(val, np.ndarray): 
@@ -468,6 +488,17 @@ class CyberTruck:
         else:
             raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
 
+    @property
+    def free_corners(self) -> np.ndarray:
+        return self._free_corners
+    
+    @free_corners.setter
+    def free_corners(self, val: np.ndarray) -> None:
+        if isinstance(val, np.ndarray): 
+            self._free_corners = val
+        else:
+            raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
+   
     @property
     def occu_volume(self) -> int:
         if not np.count_nonzero(self.occu_space +1): # Räknar alla platser skillda från noll. +1  sätter alla lediga platser till 0.
@@ -494,6 +525,7 @@ class CyberTruck:
 
     def is_space_empty(self, x1: int, y1: int, z1: int, x2: int, y2:int, z2: int) -> bool:
         """Kontrollerar om den angivna volymen är ledig. Volymen utgörs av ett rätblock mellan de två punkterna"""
+        #print(np.count_nonzero(self.occu_space[x1:x2, y1:y2, z1:z2] +1))
         return np.count_nonzero(self.occu_space[x1:x2, y1:y2, z1:z2] +1) == 0
     
     def place_package(self, package: "Package", x1: int, y1: int, z1: int, x2: int, y2: int, z2: int) -> None:
@@ -501,6 +533,10 @@ class CyberTruck:
         self.occu_space[x1:x2, y1:y2, z1:z2] = package.id # Reservera utrymme i lastutrymmet
         self.top_surface[x1:x2, y1:y2, z1] = 0
         self.top_surface[x1:x2, y1:y2, z2-1] = 1
+        self.free_corners[x1, y1, z1] = np.False_
+        self.free_corners[x1, y1, z2] = np.True_
+        self.free_corners[x2, y1, z1] = np.True_
+        self.free_corners[x1, y2, z1] = np.True_
         self.loaded_packages.append(package)
 
         # paketet
@@ -521,6 +557,10 @@ class CyberTruck:
             self.top_surface[package.x18[0]:package.x18[-1], package.y18[0]:package.y18[-1], package.z18[0]] = 1  
         
         self.top_surface[package.x18[0]:package.x18[-1], package.y18[0]:package.y18[-1], package.z18[-1]-1] = 0  # Tabort ovansida
+        self.free_corners[package.x18[0], package.y18[0], package.z18[0]] = np.True_
+        self.free_corners[package.x18[0], package.y18[0], package.z18[-1]] = np.False_
+        #self.free_corners[x2, y1, z1] = np.False_ Behöver jag ta bort dessa? Det borde inte väljas ändå?
+        #self.free_corners[x1, y2, z1] = np.False_
         self.loaded_packages.pop(self.loaded_packages.index(package)) # <--------------------------------------------rätt nu?
 
         # paketet   

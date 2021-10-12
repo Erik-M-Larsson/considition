@@ -1,5 +1,5 @@
 ﻿
-from erikur_stower import ErikurStower, ErikurProletarian
+from erikur_stower import ErikurStower, ErikurProletarian, ForkliftOperator
 from greedy_solver import GreedySolver
 import api
 import json
@@ -10,7 +10,7 @@ import os
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training1"
+map_name = "training2"
 
 def response_to_file(response, path): 
 	"""Skriv response till fil"""
@@ -73,8 +73,8 @@ def main():
 	# Filnamn
 	#path_in = "files/indata_training1.txt"
 	#path_ut = "files/utdata_training1_og.txt"
-	path_in = "prol_tr1_r.txt"
-	path_ut = "prol_tr1_s.txt"	
+	path_in = "load_faster_{map_name}_resp.txt"
+	path_ut = "load_faster_{map_name}_sol.txt"	
 
 	path_in = r"C:/Users/ErikLarsson-AIU21GBG/Documents/GitHub/considition/files/" + path_in  #"files/indata_training2.txt"
 	path_ut = r"C:/Users/ErikLarsson-AIU21GBG/Documents/GitHub/considition/files/" + path_ut #"files/utdata_training2_og.txt"
@@ -89,8 +89,10 @@ def main():
 	#solution = greedy.Solve()					# Utdata från lösaren
 	#erikur = ErikurStower(response)
 	#solution = erikur.stow_truck()
-	erikur = ErikurProletarian(response)
-	solution = erikur.stow_truck()
+	#erikur = ErikurProletarian(response)
+	#solution = erikur.stow_truck()
+	erikur = ForkliftOperator(response)
+	solution = erikur.load_faster()
 
 
 #	
