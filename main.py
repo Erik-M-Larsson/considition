@@ -10,7 +10,7 @@ import os
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training2"
+map_name = "training1"
 
 def response_to_file(response, path): 
 	"""Skriv response till fil"""
@@ -82,7 +82,7 @@ def main():
 	response = api.new_game(api_key, map_name)  # Indata från api
 	
 	# Skriv ut response i en textfil
-	response_to_file(response, path_in)
+	#response_to_file(response, path_in)
 
 
 	#greedy = GreedySolver(game_info=response)   # <----- Dessa två rader räcker för att testa

@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from Training1_max import ErikurStower
+from erikur_stowertestF import ErikurStower
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
@@ -19,14 +19,13 @@ map_name = "training1"
 def main():
 	print("Starting game...")
 	response = api.new_game(api_key, map_name)
-	
-	
-	
-	solution =[]
+
+    
 	for i in range(1):
-		erikur = ErikurStower(response)
+		solution =[]
+		erikur=  ErikurStower(response)
 		try:
-			solution.append(erikur.stow_truck())
+			solution.append(erikur.load_faster())
 		except:
 			pass
 		
@@ -54,13 +53,14 @@ def main():
 
 	max_score = max([su['score'] for su in submit_game_response])
 	print(max_score)
+
 	
 
-	avg_score = 0
-	for sus in submit_game_response:
-		avg_score += sus['score']
+	#avg_score = 0
+	#for sus in submit_game_response:
+		#avg_score += sus['score']
 	
-	print(avg_score/80)
+	#print(avg_score/80)
 
 
 if __name__ == "__main__":
