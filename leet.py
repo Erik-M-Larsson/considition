@@ -162,9 +162,7 @@ class ErikurStower:
         self._not_loaded_packages[36], self._not_loaded_packages[39]=self._not_loaded_packages[39], self._not_loaded_packages[36]
         self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+2]=self._not_loaded_packages[random_index+2], self._not_loaded_packages[random_index]
         self._not_loaded_packages[random_index_2], self._not_loaded_packages[random_index_2+3]=self._not_loaded_packages[random_index_2+3], self._not_loaded_packages[random_index_2]
-
-
-
+        
         print(random_index)
         print(random_index_2)
         
