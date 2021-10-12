@@ -5,6 +5,8 @@ from itertools import permutations
 from itertools import islice
 import timeit
 
+from numpy.core.fromnumeric import nonzero
+
 
 class Worker:
     """Överklassen :D
@@ -69,7 +71,7 @@ class Worker:
 class ForkliftOperator(Worker):
     """Truckförare lastar bilen!"""
 
-    def load(self) -> list:
+    def load_truck(self) -> list:
         """Lasta bilen"""
         start = timeit.default_timer()
         tr = self._truck
@@ -77,48 +79,41 @@ class ForkliftOperator(Worker):
         n_iter = 0
         
         for p in packing_list: # För varje paket
-            
+           
             # Lägg in paketet på flaket
             if len(tr.loaded_packages):  # Kolla om det redan finns paket   på flaket annars lägg direkt på (0, 0, 0)
                 
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
-                    if x_dim <= 0 or y_dim < 0 or z_dim < 0: 
-                            raise ValueError(f"x1, y1, z1 kan inte vara < 0 1'({x1}, {y1}, {z1})'")
-                    
+                    #if x_dim <= 0 or y_dim < 0 or z_dim < 0:                                            
+                    #     raise ValueError(f"x1, y1, z1 kan inte vara < 0 1'({x1}, {y1}, {z1})'")
+                     
                     # Hitta första tomma positionen där paketet passar
-
-                    x_1, y_1, z_1 =  np.where(tr.occu_space[0 : tr.length-x_dim, 0 : tr.width-y_dim, 0 : tr.height-z_dim if not p.heavy else 1] == -1)
-                    x_2, y_2, z_2 =np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])
+                    print(np.nonzero(tr.top_surface[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] ))
+                    x_1, y_1, z_1 = np.nonzero(tr.top_surface[0 : tr.length-x_dim, 0 : tr.width-y_dim, 0 : tr.height-z_dim if not p.heavy else 1] )
+                    x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     #x_2, y_2, z_2 =x_1 +  np.array([x_dim]), y_1 + np.array([y_dim]), z1 + np.array([z_dim]) #x_1, y_1, z_1 
-                
+                    print(x_1, y1, z_1)
+                    #print(x_1, y_1, z_1)
+                    #print(x_2, y_2, z_2)
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
-                                           
-                        x1, y1, z1, x2, y2, z2 = int(x1), int(y1), int(z1), int(x2), int(y2), int(z2)
-
+                        x1, y1, z1, x2, y2, z2 = int(x1), int(y1), int(z1), int(x2), int(y2), int(z2) # Få rätt typ för annars får Python spatt
                         n_iter += 1    
+                        #print('T2')
                         placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
                         if placement_ok:
                             break
-                        elif np.nonzero(tr.occu_space[x1:x1+1 , y1:y1+1 , z1:tr.height] +1): # Kolla z-led om tomt uppåt skippa
-                            n = tr.height - z1
-                            next(islice(x_1, n, n), None)    
-                            next(islice(y_1, n, n), None)    
-                            next(islice(z_1, n, n), None)    
-                            next(islice(x_2, n, n), None)    
-                            next(islice(y_2, n, n), None)    
-                            next(islice(z_2, n, n), None)  
-
-                        
+                       
+                            
                     
                     #if x_dim <= 0 or y_dim < 0 or z_dim < 0: 
                     #        raise ValueError(f"x1, y1, z1 kan inte vara < 0 2'({x1}, {y1}, {z1})'")
                     #if x2-x1 <= 0 or y2-y1 <= 0 or z2-z1 <= 0:
-                     #   raise ValueError(f"Paketet kan inte ha negativa sidlängder 2'({x2-x1}, {y2-y1}, {z2-z1})'")
-
+                    #   raise ValueError(f"Paketet kan inte ha negativa sidlängder 2'({x2-x1}, {y2-y1}, {z2-z1})'")
+                    #print("T3")
                     # Prova att placera paket
                     if placement_ok:
-                        tr.place_package(p, x1, y1, z1, x2, y2, z2)
+                        tr.place_package(p, x1, y1, z1, x2, y2, z2) # TODO snyggare lösning på det här
                         placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
                         tr.remomve_package(p) # Avlägsna paket igen
             
@@ -130,7 +125,7 @@ class ForkliftOperator(Worker):
                     exit()
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
-                #print(placements)
+               
             else: # lägg första paketet direkt på (0, 0, 0) längsta längden i x-led
                 placements = [{ "occupied volume" : None, "coordinates" : (0, 0, 0, p.dimensions[2], p.dimensions[1], p.dimensions[0])}]
 
@@ -140,9 +135,84 @@ class ForkliftOperator(Worker):
             
             mid_time = timeit.default_timer()
             print("\n", len(tr.loaded_packages), "paket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ", "n =", n_iter, "time:", mid_time-start)
+           
+    
+    def load_faster(self) -> list:
+        """Lasta bilen"""
+        start = timeit.default_timer()
+        tr = self._truck
+        packing_list = self._not_loaded_packages
+        n_iter = 0
+        
+        for p in packing_list: # För varje paket
+           
+            # Lägg in paketet på flaket
+            if len(tr.loaded_packages):  # Kolla om det redan finns paket   på flaket annars lägg direkt på (0, 0, 0)
+                
+                placements = []
+                for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
+                    #if x_dim <= 0 or y_dim < 0 or z_dim < 0:                                            
+                    #     raise ValueError(f"x1, y1, z1 kan inte vara < 0 1'({x1}, {y1}, {z1})'")
+                     
+                    # Hitta första tomma positionen där paketet passar
+                    print(np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] ))
+                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length-x_dim, 0 : tr.width-y_dim, 0 : tr.height-z_dim if not p.heavy else 1] )
+                    x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
+                    #x_2, y_2, z_2 =x_1 +  np.array([x_dim]), y_1 + np.array([y_dim]), z1 + np.array([z_dim]) #x_1, y_1, z_1 
+                    print(x_1, y1, z_1)
+                    #print(x_1, y_1, z_1)
+                    #print(x_2, y_2, z_2)
+                    for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
+                        x1, y1, z1, x2, y2, z2 = int(x1), int(y1), int(z1), int(x2), int(y2), int(z2) # Få rätt typ för annars får Python spatt
+                        n_iter += 1    
+                        #print('T2')
+                        placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2)
+                        if placement_ok:
+                            break
+                       
+                            
+                    
+                    #if x_dim <= 0 or y_dim < 0 or z_dim < 0: 
+                    #        raise ValueError(f"x1, y1, z1 kan inte vara < 0 2'({x1}, {y1}, {z1})'")
+                    #if x2-x1 <= 0 or y2-y1 <= 0 or z2-z1 <= 0:
+                    #   raise ValueError(f"Paketet kan inte ha negativa sidlängder 2'({x2-x1}, {y2-y1}, {z2-z1})'")
+                    #print("T3")
+                    
+                    # Prova att placera paket
+                    if placement_ok:
+                        tr.place_package(p, x1, y1, z1, x2, y2, z2) # TODO snyggare lösning på det här
+                        placements.append({ "occupied volume" : tr.occu_volume, "coordinates" : (x1, y1, z1, x2, y2, z2)})
+                        tr.remomve_package(p) # Avlägsna paket igen
+            
+                # TODO bättre urval av bästa plats
 
-            #self._not_loaded_packages.pop(0) # TODO fungerar inte i en forloop
-            #packing_list.pop(0)
+                if not placements: #Kontrollera att det finns en giltig placering
+                    print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
+                    print("Paketet får ej plats i fordonet.")
+                    exit()
+                
+                placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
+               
+            else: # lägg första paketet direkt på (0, 0, 0) längsta längden i x-led
+                placements = [{ "occupied volume" : None, "coordinates" : (0, 0, 0, p.dimensions[2], p.dimensions[1], p.dimensions[0])}]
+
+            # placera paket på vald bästa placering
+            x1, y1, z1, x2, y2, z2 = placements[0]["coordinates"]
+            tr.place_package(p, x1, y1, z1, x2, y2, z2)
+            
+            mid_time = timeit.default_timer()
+            print("\n", len(tr.loaded_packages), "paket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume, f" ({x1}, {y1}, {z1}) ", f"({x2}, {y2}, {z2}) ", "n =", n_iter, "time:", mid_time-start)
+           
+            
+      
+        print("Packat o klart!") 
+        print(n_iter)
+        # Formatera solution 
+        solution = self.format_solution()
+        stop = timeit.default_timer()
+        print((stop-start)//60, (stop-start)%60) 
+        return solution
+            
       
         print("Packat o klart!") 
         print(n_iter)
@@ -353,7 +423,10 @@ class CyberTruck:
                 raise ValueError("Ogiltig 'vehicle'")
 
         self.occu_space = np.ones((self.length, self.width, self.height), np.int8) * -1  # -1 -> ledigt
-        self.loaded_packages =[]
+        self.top_surface = np.zeros((self.length, self.width, self.height), bool)
+        self.top_surface[:, :, 0] += True
+        self.free_corners = np.zeros((self.length, self.width, self.height), bool)
+        self.free_corners[0, 0, 0] = True
         
 
         
@@ -381,6 +454,17 @@ class CyberTruck:
     def occu_space(self, val) -> None:
         if isinstance(val, np.ndarray): 
             self._occu_space = val
+        else:
+            raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
+
+    @property
+    def top_surface(self) -> np.ndarray:
+        return self._top_surface   
+
+    @top_surface.setter
+    def top_surface(self, val: np.ndarray) -> None:
+        if isinstance(val, np.ndarray): 
+            self._top_surface = val
         else:
             raise TypeError(f"Förväntade en ndarray fick '{type(val)}'")
 
@@ -415,6 +499,8 @@ class CyberTruck:
     def place_package(self, package: "Package", x1: int, y1: int, z1: int, x2: int, y2: int, z2: int) -> None:
         """Placerar paketet på lastbilen och sätter paketets koordinater"""
         self.occu_space[x1:x2, y1:y2, z1:z2] = package.id # Reservera utrymme i lastutrymmet
+        self.top_surface[x1:x2, y1:y2, z1] = 0
+        self.top_surface[x1:x2, y1:y2, z2-1] = 1
         self.loaded_packages.append(package)
 
         # paketet
@@ -427,7 +513,14 @@ class CyberTruck:
         """Avlägnar redan placerat paket"""
         
         #print(el._truck.occu_space[np.where(el._truck == p.id)])
-        self.occu_space[np.where(self.occu_space == package.id)] = -1 # Reservera utrymme i lastutrymmet
+        self.occu_space[np.where(self.occu_space == package.id)] = -1 # Avboka utrymme i lastutrymmet
+        if package.z18[0]:     # Kolla om paketet inte ligger på golver och lägg till bottenarean
+            x, y = nonzero(self.occu_space[package.x18[0]:package.x18[-1], package.y18[0]:package.y18[-1], package.z18[0]-1] + 1)
+            self.top_surface[x, y, package.z18[0]]     # Sätt yta till tillgänglig på den dela av ytan med paket under
+        else: # Om paketet ligger på golvet
+            self.top_surface[package.x18[0]:package.x18[-1], package.y18[0]:package.y18[-1], package.z18[0]] = 1  
+        
+        self.top_surface[package.x18[0]:package.x18[-1], package.y18[0]:package.y18[-1], package.z18[-1]-1] = 0  # Tabort ovansida
         self.loaded_packages.pop(self.loaded_packages.index(package)) # <--------------------------------------------rätt nu?
 
         # paketet   
