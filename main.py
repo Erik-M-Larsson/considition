@@ -1,5 +1,5 @@
-﻿
-from erikur_stower import ErikurStower
+﻿from Training1_max import ErikurStower
+#from erikur_stower import ErikurStower
 from greedy_solver import GreedySolver
 import api
 import json
@@ -10,7 +10,7 @@ import os
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training2"
+map_name = "training1"
 
 def response_to_file(response, path): 
 	"""Skriv response till fil"""
@@ -86,18 +86,23 @@ def main():
 
 	solution =[] # Lösningslista
 	submit_game_response = [] # resultatlista
-	for i in range(1): # TODO välj antal
+
+
+	for i in range(10): # TODO välj antal
+		print("\n************\n Körning: ", i+1)
 
 		# TODO välj solver här
 		#greedy = GreedySolver(game_info=response)   
 		erikur = ErikurStower(response)		
+		
 		try:
 			#so = greedy.Solve()	
-			#so = erikur.stow_truck()
-			so = erikur.load_faster()
+			so = erikur.stow_truck()
+			#so = erikur.load_faster()
 	
+			solution.append(so)
 			# Skriv data till fil
-			solution_to_file(so, path_ut)
+			#solution_to_file(so, path_ut)
 
 			#Skicka in lösning för bedömning
 			su = api.submit_game(api_key, map_name, so)
@@ -106,7 +111,7 @@ def main():
 			submit_game_response.append(su)
 		except ValueError as err:
 			print(err)
-		else:
+		except:
 			print("Något gick galet!")
 
 
