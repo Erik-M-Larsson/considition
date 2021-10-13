@@ -82,7 +82,7 @@ def main():
 	response = api.new_game(api_key, map_name)  # Indata från api
 	
 	# Skriv ut response i en textfil
-	response_to_file(response, path_in)
+	#response_to_file(response, path_in)
 
 
 	#greedy = GreedySolver(game_info=response)   # <----- Dessa två rader räcker för att testa
