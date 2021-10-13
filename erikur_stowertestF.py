@@ -28,9 +28,12 @@ class ErikurStower():
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
+        self._not_loaded_packages[46], self._not_loaded_packages[47]=self._not_loaded_packages[47], self._not_loaded_packages[46]
+        self._not_loaded_packages[3], self._not_loaded_packages[4]=self._not_loaded_packages[4], self._not_loaded_packages[3]
         self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+1]=self._not_loaded_packages[random_index+1], self._not_loaded_packages[random_index]
         self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+1]=self._not_loaded_packages[random_index2+1], self._not_loaded_packages[random_index2]
         print(f"Randint1 = {random_index} Randint 2 = {random_index2}")
+        
 
     def push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         """Puttar paketet i riktning längs dim"""
