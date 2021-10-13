@@ -248,7 +248,7 @@ def main():
 #
 
 	# Skriv data till fil
-	#solution_to_file(solution, path_ut)
+	solution_to_file(solution, path_ut)
 
 	#Skicka in lösning för bedömning
 	submit_game_response = api.submit_game(api_key, map_name, solution)
