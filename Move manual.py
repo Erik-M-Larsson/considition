@@ -108,16 +108,16 @@ kort, mellan, lång = 0, 1, 2
 
 id = 53
 x1 = None
-x2 = None
-y1 = None
-y2 = 150
+x2 = 200
+y1 = 0
+y2 = None
 z1 = None
 z2 = None
 flytta(cb, id, mellan, lång, kort, x1, y1, z1, x2, y2, z2)
 
 id = 3
-x1 = 136-5
-x2 = None
+x1 = None
+x2 = 200
 y1 = 0
 y2 = None
 z1 = None
