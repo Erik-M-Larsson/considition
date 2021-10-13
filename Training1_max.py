@@ -158,6 +158,8 @@ class ErikurStower:
 
         random_index = randint(0,57)
         random_index2 = randint(0,57)
+        test1 = randint(1,2)
+        test2 = randint(1,2)
         #temporary_list = self._not_loaded_packages[:]
 
         #permutator = temporary_list[25]
@@ -177,8 +179,15 @@ class ErikurStower:
         self._not_loaded_packages[31],self._not_loaded_packages[32]=self._not_loaded_packages[32], self._not_loaded_packages[31]
         self._not_loaded_packages[17],self._not_loaded_packages[18]=self._not_loaded_packages[18], self._not_loaded_packages[17]
         self._not_loaded_packages[12],self._not_loaded_packages[13]=self._not_loaded_packages[13], self._not_loaded_packages[12]
-        self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+2]=self._not_loaded_packages[random_index+2], self._not_loaded_packages[random_index]
-        self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+1]=self._not_loaded_packages[random_index2+1], self._not_loaded_packages[random_index2]
+        self._not_loaded_packages[26],self._not_loaded_packages[28]=self._not_loaded_packages[28], self._not_loaded_packages[26]
+        self._not_loaded_packages[19],self._not_loaded_packages[21]=self._not_loaded_packages[21], self._not_loaded_packages[19]
+        self._not_loaded_packages[32],self._not_loaded_packages[34]=self._not_loaded_packages[34], self._not_loaded_packages[32]
+        self._not_loaded_packages[10],self._not_loaded_packages[8]=self._not_loaded_packages[8], self._not_loaded_packages[10]
+        self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
+        self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
+        
+
+
 
 
 
@@ -190,8 +199,8 @@ class ErikurStower:
         #temporary_list[random_index+1]=permutator
         
         #self._not_loaded_packages=temporary_list
-        print(f"Paket nr {random_index} bytte plats med paket nr {random_index+1}")
-        print(f"... och paket nr {random_index2} bytte plats med paket nr {random_index2+1}")
+        print(f"Paket nr {random_index} bytte plats med paket nr {random_index+test1}")
+        print(f"... och paket nr {random_index2} bytte plats med paket nr {random_index2+test2}")
     
     def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         i = 1 # initera i ifall start = 0
