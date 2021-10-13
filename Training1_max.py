@@ -156,8 +156,8 @@ class ErikurStower:
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
 
-        random_index = randint(0,58)
-        random_index2 = randint(0,58)
+        random_index = randint(0,57)
+        random_index2 = randint(0,57)
         #temporary_list = self._not_loaded_packages[:]
 
         #permutator = temporary_list[25]
@@ -175,8 +175,16 @@ class ErikurStower:
         self._not_loaded_packages[46],self._not_loaded_packages[47]=self._not_loaded_packages[47], self._not_loaded_packages[46]
         self._not_loaded_packages[38],self._not_loaded_packages[39]=self._not_loaded_packages[39], self._not_loaded_packages[38]
         self._not_loaded_packages[31],self._not_loaded_packages[32]=self._not_loaded_packages[32], self._not_loaded_packages[31]
-        #self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+1]=self._not_loaded_packages[random_index+1], self._not_loaded_packages[random_index]
-        #self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+1]=self._not_loaded_packages[random_index2+1], self._not_loaded_packages[random_index2]
+        self._not_loaded_packages[17],self._not_loaded_packages[18]=self._not_loaded_packages[18], self._not_loaded_packages[17]
+        self._not_loaded_packages[12],self._not_loaded_packages[13]=self._not_loaded_packages[13], self._not_loaded_packages[12]
+        self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+2]=self._not_loaded_packages[random_index+2], self._not_loaded_packages[random_index]
+        self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+1]=self._not_loaded_packages[random_index2+1], self._not_loaded_packages[random_index2]
+
+
+
+
+
+
         
 
         #temporary_list[random_index+1]=permutator

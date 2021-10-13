@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from Training2_leet import ErikurStower
+from Training2_max import ErikurStower
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
@@ -21,13 +21,14 @@ def main():
 	response = api.new_game(api_key, map_name)
 	solution =[]
 
-	for i in range(1):
+	for i in range(50):
 		
 		erikur=  ErikurStower(response)
 		try:
 			solution.append(erikur.stow_truck())
 		except:
 			pass
+	
 		
 
 	'''path_ut = "solution.txt"
@@ -50,7 +51,7 @@ def main():
 		print(su)
 		submit_game_response.append(su)
 
-
+	
 	max_score = max([su['score'] for su in submit_game_response])
 	print(max_score)
 	print(su)
