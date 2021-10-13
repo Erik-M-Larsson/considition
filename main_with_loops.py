@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from Training1_max import ErikurStower
+from Training2_leet import ErikurStower
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
@@ -12,19 +12,18 @@ from Training1_max import ErikurStower
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training1"
+map_name = "training2"
 
 
 
 def main():
 	print("Starting game...")
 	response = api.new_game(api_key, map_name)
-	
-	
-	
 	solution =[]
+
 	for i in range(1):
-		erikur = ErikurStower(response)
+		
+		erikur=  ErikurStower(response)
 		try:
 			solution.append(erikur.stow_truck())
 		except:
@@ -54,13 +53,15 @@ def main():
 
 	max_score = max([su['score'] for su in submit_game_response])
 	print(max_score)
+	print(su)
+
 	
 
-	avg_score = 0
-	for sus in submit_game_response:
-		avg_score += sus['score']
+	#avg_score = 0
+	#for sus in submit_game_response:
+		#avg_score += sus['score']
 	
-	print(avg_score/80)
+	#print(avg_score/80)
 
 
 if __name__ == "__main__":
