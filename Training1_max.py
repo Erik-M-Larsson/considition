@@ -183,9 +183,12 @@ class ErikurStower:
         self._not_loaded_packages[19],self._not_loaded_packages[21]=self._not_loaded_packages[21], self._not_loaded_packages[19]
         self._not_loaded_packages[32],self._not_loaded_packages[34]=self._not_loaded_packages[34], self._not_loaded_packages[32]
         self._not_loaded_packages[10],self._not_loaded_packages[8]=self._not_loaded_packages[8], self._not_loaded_packages[10]
+        self._not_loaded_packages[54],self._not_loaded_packages[55]=self._not_loaded_packages[55], self._not_loaded_packages[54]
+        self._not_loaded_packages[58],self._not_loaded_packages[57]=self._not_loaded_packages[57], self._not_loaded_packages[58]
         self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
         self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
         
+
 
 
 
