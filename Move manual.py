@@ -20,8 +20,12 @@ def flytta(cb, p_id, x_dim, y_dim, z_dim, x1=None, y1=None, z1=None, x2=None, y2
         y1 = y2 - package.dimensions[y_dim]
     if type(z1) == int:
         z2 = z1 + package.dimensions[z_dim]
-    else:
+    elif type(z2) == int:
         z1 = z2 - package.dimensions[z_dim]
+    else:
+        z1 = cb.height - package.dimensions[z_dim]
+        z2 = cb.height
+        z1, z2 = cb.push_package(direction='z', start= z1, dim=z2-z1, x1=x1, x2=x2, y1=y1, y2=y2)
 
     print('(', x1, y1, z1, ') (', x2, y2, z2, ')')
 
@@ -85,7 +89,7 @@ kort, mellan, lång = 0, 1, 2
 # Flytta paketen
 # Fyll endast i anting x1 eller x2   
 # Fyll endast i anting y1 eller y2
-# Fyll endast i anting z1 eller z2
+# Fyll endast i anting z1 eller z2. Det går även att utelämna z1, z2 då hamnar den på första ytan uppifrån
 # Fyll i kort, mellan, lång beroende på hur du vill orientera paketet
 
 
@@ -95,7 +99,7 @@ x1 = 136
 x2 = None
 y1 = 0
 y2 = None
-z1 = 50
+z1 = 0
 z2 = None
 flytta(cb, id, mellan, lång, kort, x1, y1, z1, x2, y2, z2)
 
@@ -104,7 +108,7 @@ x1 = 136-5
 x2 = None
 y1 = 0
 y2 = None
-z1 = 64
+z1 = None
 z2 = None
 flytta(cb, id, kort, lång, mellan, x1, y1, z1, x2, y2, z2)
 
