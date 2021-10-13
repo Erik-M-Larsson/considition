@@ -24,15 +24,19 @@ class ErikurProletarian:
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
-
-        random_index = randint(0,58)
+        
+    
+        random_index = randint(0,len(self._not_loaded_packages)-2)  # Kollar längden på listan beroende på karta
         temporary_list = self._not_loaded_packages[:]
-
+       
         permutator = temporary_list[random_index]
         temporary_list[random_index]=temporary_list[random_index+1]
         temporary_list[random_index+1]=permutator
         
         self._not_loaded_packages=temporary_list
+        print([ p.id for p in self._not_loaded_packages])
+            
+
 
     def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         i = 1 # initera i ifall start = 0
@@ -49,7 +53,7 @@ class ErikurProletarian:
                 z2 = i
             else:
                 print("Ogiltig direction!")
-                exit()    
+                raise ValueError("Ogiltig direction!") #exit()    
 
             # Kolla om paketet stöter i annat paket och
             if not self._truck.is_space_empty(x1, y1, z1, x2, y2, z2):
@@ -98,7 +102,7 @@ class ErikurProletarian:
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
                     print("Paketet får ej i lastbilen.")
-                    exit()
+                    raise ValueError("Paketet får ej plats i fordonet.") #exit()
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
                 #print(placements)
@@ -220,7 +224,7 @@ class ErikurStower:
                 z2 = i
             else:
                 print("Ogiltig direction!")
-                exit()    
+                raise ValueError("Ogiltig direction!") #exit()    
 
             # Kolla om paketet stöter i annat paket och
             if not self._truck.is_space_empty(x1, y1, z1, x2, y2, z2):
@@ -291,7 +295,7 @@ class ErikurStower:
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
                     print("Paketet får ej i lastbilen.")
-                    exit()
+                    raise ValueError("paketet får inte plats i fordonet.") #exit()
                 
                 if p.heavy:
                     placements = [pl for pl in placements if pl['coordinates'][5]-pl['coordinates'][2]==p._dimensions[2]]
