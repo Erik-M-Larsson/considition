@@ -22,57 +22,17 @@ class ErikurStower():
         except KeyError:
                 raise ValueError("Ogiltig 'game_info.")  
 
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
+    
 
-    def push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
-        """Puttar paketet i riktning längs dim"""
-        i = 1 # initera i ifall start = 0
-        for i in range(start, 0, -1): # Kör tills paketet når väggen
-            # Sätt startvärden
-            if direction == 'x':
-                x1 = i-1
-                x2 = i 
-            elif direction == 'y':
-                y1 = i-1
-                y2 = i
-            elif direction == 'z':
-                z1 = i-1
-                z2 = i
-            else:
-                print("Ogiltig direction!")
-                exit()    
+ 
 
-            # Kolla om paketet stöter i annat paket och
-            if not self._truck.is_space_empty(x1, y1, z1, x2, y2, z2):
-                i += 1
-                break
-        return (i-1 , i-1 + dim )
-
-    def format_solution(self) -> list:
-        solution =[]
-        for p in self._truck.loaded_packages:
-            solution.append({   'id': p.id,   
-                                'x1': p.x18[0], 'x2': p.x18[1], 'x3': p.x18[2], 'x4': p.x18[3], 'x5': p.x18[4], 'x6': p.x18[5], 'x7': p.x18[6], 'x8': p.x18[7], 
-                                'y1': p.y18[0], 'y2': p.y18[1], 'y3': p.y18[2], 'y4': p.y18[3], 'y5': p.y18[4], 'y6': p.y18[5], 'y7': p.y18[6], 'y8': p.y18[7],
-                                'z1': p.z18[0], 'z2': p.z18[1], 'z3': p.z18[2], 'z4': p.z18[3], 'z5': p.z18[4], 'z6': p.z18[5], 'z7': p.z18[6], 'z8': p.z18[7],
-                                'weightClass': p.weight_class, 'orderClass': p.order_class})
-        return solution
-
-    def package_behind(self, p: "Package", x1: int , y1: int , z1: int, x2: int, y2: int, z2: int) -> bool:
-        """Kontrollera om det finns paket framför med högre order"""
-        o_space = self._truck.occu_space[x2:self._truck.length, y1:y2, z1:z2] # Volym från paket till bakgavel
-        p_behind =set(self._truck.occu_space[x2:self._truck.length, y1:y2, z1:z2][np.nonzero(o_space+1)]) # Hitta alla unika värden på paket bakom
-        
-        order_class_loaded_p = { l_p.id : l_p.order_class for l_p in self._truck.loaded_packages}   # För snabbhet borde detta inte ligga i metoden
-
-        for p_b in p_behind:
-            if  order_class_loaded_p[p_b] > p.order_class:
-                return True
-
-        return False
-        
+  
 
 
 
@@ -162,7 +122,7 @@ class ErikurStower():
         print("Packat o klart!") 
         
         # Formatera solution
-        solution = self.format_solution()
+        solution = tr.format_solution()
         
         return solution
 
@@ -245,7 +205,7 @@ class ErikurStower():
         print("Packat o klart!") 
         print(n_iter)
         # Formatera solution
-        solution = self.format_solution()
+        solution = tr.format_solution()
         
         stop = timeit.default_timer()
         print((stop-start)//60, (stop-start)%60) 
@@ -322,7 +282,7 @@ class ErikurStower():
         print("Packat o klart!") 
         print(n_iter)
         # Formatera solution 
-        solution = self.format_solution()
+        solution = tr.format_solution()
         stop = timeit.default_timer()
         print((stop-start)//60, (stop-start)%60) 
         return solution           
@@ -343,8 +303,9 @@ class ErikurStower():
                 
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
-                  
-                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
+                    
+                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 if not p.heavy else 1  : tr.height  if not p.light else 1])
+                    #x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
                     x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
@@ -354,9 +315,9 @@ class ErikurStower():
                         xo, yo, zo, = -1, -1, -1
                         while  (x1, y1, z1) != (xo, yo, zo):
                             xo, yo, zo = x1, y1, z1 # spara värden fån föregående iterration
-                            z1, z2 = self.push_package('z', start=z1, dim=z_dim, x1=x1, x2=x2, y1=y1, y2=y2)
-                            x1, x2 = self.push_package('x', start=x1, dim=x_dim, y1=y1, y2=y2, z1=z1, z2=z2)
-                            y1, y2 = self.push_package('y', start=y1, dim=y_dim, x1=x1, x2=x2, z1=z1, z2=z2) # Funkar inte, varför?
+                            z1, z2 = tr.push_package('z', start=z1, dim=z_dim, x1=x1, x2=x2, y1=y1, y2=y2)
+                            x1, x2 = tr.push_package('x', start=x1, dim=x_dim, y1=y1, y2=y2, z1=z1, z2=z2)
+                            y1, y2 = tr.push_package('y', start=y1, dim=y_dim, x1=x1, x2=x2, z1=z1, z2=z2) # Funkar inte, varför?
                             
                         if not ((x2 <= tr.length) and (y2 <= tr.width) and (z2 < tr.height)): # Kolla så paketet inte är utanför
                             continue
@@ -364,7 +325,7 @@ class ErikurStower():
                         placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2) # Kolla att det är tomt
 
                         # Kontrollera om paket med högre order framför
-                        p_b = self.package_behind(p,x1 , y1 , z1, x2, y2, z2)
+                        p_b = tr.package_behind(p,x1 , y1 , z1, x2, y2, z2)
 
                         if placement_ok and not p_b:
                             break
@@ -400,9 +361,9 @@ class ErikurStower():
         print("Packat o klart!") 
         print("Iteration: ", n_iter)
         # Formatera solution 
-        solution = self.format_solution()
+        solution = tr.format_solution()
         stop = timeit.default_timer()
-        print(f"Time {(stop-start)//60:f0}:{(stop-start)%60:f0}" )
+        print(f"Time {(stop-start)//60:.0f}:{(stop-start)%60:.0f}" )
 
         return solution
             
@@ -520,9 +481,12 @@ class CyberTruck:
         self.top_surface[x1:x2, y1:y2, z1] = 0
         self.top_surface[x1:x2, y1:y2, z2-1] = 1
         self.free_corners[x1, y1, z1] = np.False_
-        self.free_corners[x1, y1, z2] = np.True_
-        self.free_corners[x2, y1, z1] = np.True_
-        self.free_corners[x1, y2, z1] = np.True_
+        if z2 < self.height:
+            self.free_corners[x1, y1, z2] = np.True_
+        if x2 < self.length:
+            self.free_corners[x2, y1, z1] = np.True_
+        if y2 < self.width:
+            self.free_corners[x1, y2, z1] = np.True_
         self.loaded_packages.append(package)
 
         # paketet
@@ -557,6 +521,92 @@ class CyberTruck:
 
         return(package.x18[0] , package.y18[0] , package.z18[0], package.x18[-1], package.y18[-1], package.z18[-1])     
 
+    def move_package(self, package: "Package", x1: int, y1: int, z1: int, x2: int, y2:int, z2: int) -> None:
+        "Flyttar redan placerat paket"
+
+        p_o_t = self.package_on_top(package)
+        #print("p_o_t" , p_o_t)
+
+        self.remomve_package(package)
+        if not self.is_space_empty(x1, y1, z1, x2, y2, z2):
+            raise ValueError("Platsen är inte ledig!")
+        self.place_package(package, x1, y1, z1, x2, y2, z2)
+            
+        for p in p_o_t:
+            x1, x2 = p.x18[3:5]
+            y1, y2 = p.y18[3:5]
+            z1, z2 = p.z18[3:5]
+            #print("xyz 1  (", x1, y1, z1, ") (", x2, y2, z2, ")" )
+            z1, z2 = self.push_package('z', start=z1, dim=z2-z1, x1=x1, x2=x2, y1=y1, y2=y2)
+            #print("xyz 2  (", x1, y1, z1, ") (", x2, y2, z2, ")" )
+            self.move_package(p, x1, y1, z1, x2, y2, z2)
+            
+
+    def package_behind(self, p: "Package", x1: int , y1: int , z1: int, x2: int, y2: int, z2: int) -> bool:
+        """Kontrollera om det finns paket framför med högre order"""
+        o_space = self.occu_space[x2:self.length, y1:y2, z1:z2] # Volym från paket till bakgavel
+        p_behind =set(self.occu_space[x2:self.length, y1:y2, z1:z2][np.nonzero(o_space+1)]) # Hitta alla unika värden på paket bakom
+        
+        order_class_loaded_p = { l_p.id : l_p.order_class for l_p in self.loaded_packages}   # För snabbhet borde detta inte ligga i metoden
+
+        for p_b in p_behind:
+            if  order_class_loaded_p[p_b] > p.order_class:
+                return True
+
+        return False
+        
+    def package_on_top(self, package: "Package") -> list:
+        """Kontrollera vilka paket som vilar direkt på paket. Returnera de paketen."""
+        x1, x2 = package.x18[3:5]
+        y1, y2 = package.y18[3:5]
+        z2 = package.z18[4]
+        
+        o_space = self.occu_space[x1:x2, y1:y2, z2] # Volym från paket till bakgavel TODO metod  av upprepad kod
+        p_on_top = set(self.occu_space[x1:x2, y1:y2, z2][np.nonzero(o_space+1)]) # Hitta alla unika värden på paket bakom
+
+        #print("p_on_top", p_on_top)
+        packages_on_top = []            # TODO metod hitta paket från id
+        for p_o_t in p_on_top:
+            #print(p_o_t)
+            for p in self.loaded_packages:
+                if p.id == p_o_t:
+                    packages_on_top.append(p)
+
+        return packages_on_top
+        
+    def push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
+        """Puttar paketet i riktning längs dim"""
+        i = 1 # initera i ifall start = 0
+        for i in range(start, 0, -1): # Kör tills paketet når väggen
+            # Sätt startvärden
+            if direction == 'x':
+                x1 = i-1
+                x2 = i 
+            elif direction == 'y':
+                y1 = i-1
+                y2 = i
+            elif direction == 'z':
+                z1 = i-1
+                z2 = i
+            else:
+                print("Ogiltig direction!")
+                exit()    
+
+            # Kolla om paketet stöter i annat paket och
+            if not self.is_space_empty(x1, y1, z1, x2, y2, z2):
+                i += 1
+                break
+        return (i-1 , i-1 + dim )
+
+    def format_solution(self) -> list:
+        solution =[]
+        for p in self.loaded_packages:
+            solution.append({   'id': p.id,   
+                                'x1': p.x18[0], 'x2': p.x18[1], 'x3': p.x18[2], 'x4': p.x18[3], 'x5': p.x18[4], 'x6': p.x18[5], 'x7': p.x18[6], 'x8': p.x18[7], 
+                                'y1': p.y18[0], 'y2': p.y18[1], 'y3': p.y18[2], 'y4': p.y18[3], 'y5': p.y18[4], 'y6': p.y18[5], 'y7': p.y18[6], 'y8': p.y18[7],
+                                'z1': p.z18[0], 'z2': p.z18[1], 'z3': p.z18[2], 'z4': p.z18[3], 'z5': p.z18[4], 'z6': p.z18[5], 'z7': p.z18[6], 'z8': p.z18[7],
+                                'weightClass': p.weight_class, 'orderClass': p.order_class})
+        return solution
 
 
 
@@ -592,6 +642,10 @@ class Package:
     @property 
     def weight_class(self) -> int:
         return self._weight_class
+
+    @property
+    def light(self) -> bool:
+        return self.weight_class == 0   
 
     @property
     def heavy(self) -> bool:
