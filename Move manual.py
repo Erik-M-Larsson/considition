@@ -10,14 +10,25 @@ def flytta(cb, p_id, x_dim, y_dim, z_dim, x1=None, y1=None, z1=None, x2=None, y2
         if p.id == p_id:
             package = p
 
+  
     if type(x1) == int:
         x2 = x1 + package.dimensions[x_dim]
-    else:
+    elif type(x2) == int:
         x1 = x2 - package.dimensions[x_dim]
+    else:
+        x1 = cb.length - package.dimensions[x_dim]
+        x2 = cb.length
+        x1, x2 = cb.push_package(direction='x', start= x1, dim=package.dimensions[x_dim], y1=y1, y2=y2, z1=z1, z2=z2)
+    
     if type(y1) == int:
         y2 = y1 + package.dimensions[y_dim]
-    else:
+    elif type(y2) == int:
         y1 = y2 - package.dimensions[y_dim]
+    else:
+        y1 = cb.width - package.dimensions[y_dim]
+        y2 = cb.width
+        y1, y2 = cb.push_package(direction='y', start= y1, dim=package.dimensions[y_dim], x1=x1, x2=x2, z1=z1, z2=z2)
+
     if type(z1) == int:
         z2 = z1 + package.dimensions[z_dim]
     elif type(z2) == int:
@@ -25,7 +36,7 @@ def flytta(cb, p_id, x_dim, y_dim, z_dim, x1=None, y1=None, z1=None, x2=None, y2
     else:
         z1 = cb.height - package.dimensions[z_dim]
         z2 = cb.height
-        z1, z2 = cb.push_package(direction='z', start= z1, dim=z2-z1, x1=x1, x2=x2, y1=y1, y2=y2)
+        z1, z2 = cb.push_package(direction='z', start= z1, dim=package.dimensions[z_dim], x1=x1, x2=x2, y1=y1, y2=y2)
 
     print('(', x1, y1, z1, ') (', x2, y2, z2, ')')
 
@@ -89,17 +100,18 @@ kort, mellan, lång = 0, 1, 2
 # Flytta paketen
 # Fyll endast i anting x1 eller x2   
 # Fyll endast i anting y1 eller y2
-# Fyll endast i anting z1 eller z2. Det går även att utelämna z1, z2 då hamnar den på första ytan uppifrån
+# Fyll endast i anting z1 eller z2. 
+# Det går även att utelämna någon men endast en av x, y, z helt. Då hamnar den på första ytan från max.
 # Fyll i kort, mellan, lång beroende på hur du vill orientera paketet
 
 
 
 id = 53
-x1 = 136
+x1 = None
 x2 = None
-y1 = 0
-y2 = None
-z1 = 0
+y1 = None
+y2 = 150
+z1 = None
 z2 = None
 flytta(cb, id, mellan, lång, kort, x1, y1, z1, x2, y2, z2)
 
@@ -111,6 +123,7 @@ y2 = None
 z1 = None
 z2 = None
 flytta(cb, id, kort, lång, mellan, x1, y1, z1, x2, y2, z2)
+
 
 '''
 id = 41
