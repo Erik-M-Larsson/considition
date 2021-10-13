@@ -1,4 +1,5 @@
 #from math import prod
+from random import shuffle
 import numpy as np
 from typing import Type
 from itertools import permutations
@@ -22,18 +23,17 @@ class ErikurStower():
         except KeyError:
                 raise ValueError("Ogiltig 'game_info.")  
 
-        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
-        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
-        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
-    
-
- 
-
-  
-
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
+      
+        print("********** Random shuffle **********")
+        shuffle(self._not_loaded_packages)
+        
+        
 
 
 
@@ -99,8 +99,8 @@ class ErikurStower():
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
-                    print("Paketet får ej i lastbilen.")
-                    exit()
+                    raise ValueError("Paketet får ej i lastbilen.")
+                    
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
                 #print(placements) 
@@ -129,7 +129,8 @@ class ErikurStower():
 
 
     def stow_truck2(self) -> list:
-        """Stuva bilen riktig bra"""
+        """Stuva bilen riktig bra
+            funkar dåligt"""
         start = timeit.default_timer()
         tr = self._truck
         packing_list = self._not_loaded_packages
@@ -184,8 +185,8 @@ class ErikurStower():
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
-                    print("Paketet får ej plats i fordonet.")
-                    exit()
+                    raise ValueError("Paketet får ej plats i fordonet.")
+                    
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
                 #print(placements)
@@ -214,7 +215,8 @@ class ErikurStower():
 
 
     def load_truck(self) -> list:
-        """Lasta bilen"""
+        """Lasta bilen
+        funkar dåligt"""
         start = timeit.default_timer()
         tr = self._truck
         packing_list = self._not_loaded_packages
@@ -263,8 +265,8 @@ class ErikurStower():
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
-                    print("Paketet får ej plats i fordonet.")
-                    exit()
+                    raise ValueError("Paketet får ej plats i fordonet.")
+                   
                 
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
                
@@ -304,8 +306,8 @@ class ErikurStower():
                 placements = []
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
                     
-                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 if not p.heavy else 1  : tr.height  if not p.light else 1])
-                    #x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
+                    #x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 if not p.heavy else 1  : tr.height  if not p.light else 1])
+                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
                     x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
@@ -319,7 +321,8 @@ class ErikurStower():
                             x1, x2 = tr.push_package('x', start=x1, dim=x_dim, y1=y1, y2=y2, z1=z1, z2=z2)
                             y1, y2 = tr.push_package('y', start=y1, dim=y_dim, x1=x1, x2=x2, z1=z1, z2=z2) # Funkar inte, varför?
                             
-                        if not ((x2 <= tr.length) and (y2 <= tr.width) and (z2 < tr.height)): # Kolla så paketet inte är utanför
+                        if not ((x2 <= tr.length) and (y2 <= tr.width) and (z2 <= tr.height)): # Kolla så paketet inte är utanför
+                            placement_ok = False
                             continue
                         
                         placement_ok = tr.is_space_empty(x1 , y1 , z1, x2, y2, z2) # Kolla att det är tomt
@@ -342,8 +345,8 @@ class ErikurStower():
 
                 if not placements: #Kontrollera att det finns en giltig placering
                     print("\npaket", p.id, "order_class", p.order_class, "vikt", p.weight_class, "volym", p.volume)
-                    print("Paketet får ej plats i fordonet.")
-                    exit()
+                    raise ValueError("Paketet får ej plats i fordonet.")
+
                 placements = sorted(placements, key=lambda pa: pa["coordinates"][5]-pa["coordinates"][2], reverse = True)
                 placements = sorted(placements, key=lambda pa: pa["occupied volume"], reverse = False)
                
@@ -352,6 +355,7 @@ class ErikurStower():
 
             # placera paket på vald bästa placering
             x1, y1, z1, x2, y2, z2 = placements[0]["coordinates"]
+            #print(x1, y1, z1, x2, y2, z2)
             tr.place_package(p, x1, y1, z1, x2, y2, z2)
             
             mid_time = timeit.default_timer()
@@ -589,8 +593,7 @@ class CyberTruck:
                 z1 = i-1
                 z2 = i
             else:
-                print("Ogiltig direction!")
-                exit()    
+                raise ValueError("Ogiltig direction!")   
 
             # Kolla om paketet stöter i annat paket och
             if not self.is_space_empty(x1, y1, z1, x2, y2, z2):
