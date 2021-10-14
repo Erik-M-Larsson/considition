@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from FredrikH import ErikurStower, Package, CyberTruck
+from FredrikH2 import ErikurStower, Package, CyberTruck
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
