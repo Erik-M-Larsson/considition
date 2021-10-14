@@ -28,20 +28,27 @@ class ErikurStower:
 
     
         #shuffle(self._not_loaded_packages)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions), reverse = False)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions[0]), reverse = True)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
-
-        random_index = randint(0,len(self._not_loaded_packages)-3)
-        random_index2 = randint(0,len(self._not_loaded_packages)-3)
-        test1 = randint(1,2)
-        test2 = randint(1,2)
+        print (self._not_loaded_packages[0].dimensions)
+        self.random_index = randint(0,len(self._not_loaded_packages)-3)
+        self.random_index2 = randint(0,len(self._not_loaded_packages)-3)
+        self.test1 = randint(1,2)
+        self.test2 = randint(1,2)
         
-        #self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
-        #self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
-        #self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
-        #self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
+        
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[0],self._not_loaded_packages[0]=self._not_loaded_packages[0], self._not_loaded_packages[0]
+        self._not_loaded_packages[self.random_index], self._not_loaded_packages[self.random_index+self.test1]=self._not_loaded_packages[self.random_index+self.test1], self._not_loaded_packages[self.random_index]
+        self._not_loaded_packages[self.random_index2], self._not_loaded_packages[self.random_index2+self.test2]=self._not_loaded_packages[self.random_index2+self.test2], self._not_loaded_packages[self.random_index2]
         
 
 
@@ -57,8 +64,7 @@ class ErikurStower:
         #temporary_list[random_index+1]=permutator
         
         #self._not_loaded_packages=temporary_list
-        print(f"Paket nr {random_index} bytte plats med paket nr {random_index+test1}")
-        print(f"... och paket nr {random_index2} bytte plats med paket nr {random_index2+test2}")
+        
     
     def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         i = 1 # initera i ifall start = 0
@@ -179,7 +185,7 @@ class ErikurStower:
                                 'weightClass': p.weight_class, 'orderClass': p.order_class})
         
         
-        return solution
+        return (solution, (f"Paket nr {self.random_index} bytte plats med paket nr {self.random_index+self.test1}\n... och paket nr {self.random_index2} bytte plats med paket nr {self.random_index2+self.test2}"))
 
 
  

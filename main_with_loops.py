@@ -15,46 +15,36 @@ api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 map_name = "training2"
 
 
+latest = 3200
 
 def main():
 	print("Starting game...")
 	response = api.new_game(api_key, map_name)
 	solution =[]
-
-	for i in range(1):
+	submit_game_response = []
+	for i in range(40):
 		
-		erikur=  ErikurStower(response)
+		erikur =  ErikurStower(response)
 		try:
-			solution.append(erikur.stow_truck())
+			so, svar = erikur.stow_truck()
+			solution.append(so)
+
+			su = api.submit_game(api_key, map_name, so)
+			print(su)
+			submit_game_response.append(su)
+			if su['score'] > latest:
+				print(su['score'])
+				print(svar)
+				break
+		
 		except:
 			pass
-	
 		
-
-	'''path_ut = "solution.txt"
-	# Skriv utdata till fil # TODO metod
-	with open(path_ut, 'w')	as f_ut:
-		f_ut.write("solution = \n")
-		f_ut.write(str(solution) + '\n'*2)
-		f_ut.write("**************************" + '\n'*2)
-			
-		for p in solution:
-			for k, v in p.items():
-				#print(f"\t{k} : {v}")
-				f_ut.write(f"\t{k} : {v}\n")
-			#print('')	
-			f_ut.write('\n')
-	'''
-	submit_game_response = []
-	for s in solution:
-		su = api.submit_game(api_key, map_name, s)
-		print(su)
-		submit_game_response.append(su)
+		
+	print("Loopen tog slut!")	   
 
 	
-	max_score = max([su['score'] for su in submit_game_response])
-	print(max_score)
-	print(su)
+	
 
 	
 
