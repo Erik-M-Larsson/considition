@@ -23,15 +23,22 @@ class ErikurStower():
         except KeyError:
                 raise ValueError("Ogiltig 'game_info.")  
 
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
-      
-        print("********** Random shuffle **********")
-        shuffle(self._not_loaded_packages)
+
+        #random_index = randint(0,len(self._not_loaded_packages)-3)
+        #random_index2 = randint(0,len(self._not_loaded_packages)-3)
+        #test1 = randint(1,2)
+        #test2 = randint(1,2)
+        #self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
+        #self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
+
+   
         
         
 
