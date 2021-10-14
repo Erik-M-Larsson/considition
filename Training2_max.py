@@ -156,8 +156,8 @@ class ErikurStower:
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
         self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
 
-        random_index = randint(0,37)
-        random_index2 = randint(0,37)
+        random_index = randint(0,36)
+        random_index2 = randint(0,36)
         test1 = randint(1,3)
         test2 = randint(1,3)
         #temporary_list = self._not_loaded_packages[:]
@@ -185,13 +185,14 @@ class ErikurStower:
         self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
         self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
         
+        
 
 
 
         #temporary_list[random_index+1]=permutator
         
         #self._not_loaded_packages=temporary_list
-        print(f"Paket nr {random_index} bytte plats med paket nr {random_index+1} och {random_index2+2} bytte med {random_index2}")
+        print(f"Paket nr {random_index} bytte plats med paket nr {random_index+test1} och {random_index2} bytte med {random_index2+test2}")
     
     def _push_package(self, direction: str, start: int, dim: int, x1: int=0, x2: int=0, y1: int=0, y2: int=0, z1: int=0, z2: int=0) -> tuple:   
         i = 1 # initera i ifall start = 0
