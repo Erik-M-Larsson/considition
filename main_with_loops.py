@@ -3,7 +3,7 @@ import api
 import json
 import sys
 sys.path.append("../considition")
-from erikur_stower import ErikurStower
+from FredrikH import ErikurStower
 #greedy =     GreedySolver(game_info=response)   
 #solution = greedy.Solve()           
 
@@ -12,7 +12,7 @@ from erikur_stower import ErikurStower
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training1"
+map_name = "training2"
 
 
 
