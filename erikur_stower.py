@@ -1,5 +1,5 @@
 #from math import prod
-from random import shuffle
+from random import shuffle, randint
 import numpy as np
 from typing import Type
 from itertools import permutations
@@ -23,20 +23,20 @@ class ErikurStower():
         except KeyError:
                 raise ValueError("Ogiltig 'game_info.")  
 
-        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
-        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
+        self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.dimensions), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = True)
+        #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = True)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.volume), reverse = True)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.heavy), reverse = False)
         #self._not_loaded_packages = sorted(self._not_loaded_packages, key = lambda p: (p.order_class), reverse = False)
 
-        #random_index = randint(0,len(self._not_loaded_packages)-3)
-        #random_index2 = randint(0,len(self._not_loaded_packages)-3)
-        #test1 = randint(1,2)
-        #test2 = randint(1,2)
-        #self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
-        #self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
+        random_index = randint(0,len(self._not_loaded_packages)-3)
+        random_index2 = randint(0,len(self._not_loaded_packages)-3)
+        test1 = randint(1,2)
+        test2 = randint(1,2)
+        self._not_loaded_packages[random_index], self._not_loaded_packages[random_index+test1]=self._not_loaded_packages[random_index+test1], self._not_loaded_packages[random_index]
+        self._not_loaded_packages[random_index2], self._not_loaded_packages[random_index2+test2]=self._not_loaded_packages[random_index2+test2], self._not_loaded_packages[random_index2]
 
    
         
@@ -314,7 +314,7 @@ class ErikurStower():
                 for x_dim, y_dim, z_dim in permutations([p.dimensions[0], p.dimensions[1], p.dimensions[2]], 3):  # Prova alla vridningar på paketet
                     
                     #x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 if not p.heavy else 1  : tr.height  if not p.light else 1])
-                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height if not p.heavy else 1] )
+                    x_1, y_1, z_1 = np.nonzero(tr.free_corners[0 : tr.length, 0 : tr.width, 0 : tr.height ]) #if not p.heavy else 1] )
                     x_2, y_2, z_2 = np.array([x_1 + x_dim, y_1 + y_dim, z_1 + z_dim])       # Få rätt typ för annars får Python spatt
                     
                     for x1 , y1 , z1, x2, y2, z2 in  zip(x_1, y_1, z_1, x_2, y_2, z_2): 
@@ -337,7 +337,7 @@ class ErikurStower():
                         # Kontrollera om paket med högre order framför
                         p_b = tr.package_behind(p,x1 , y1 , z1, x2, y2, z2)
 
-                        if placement_ok and not p_b:
+                        if placement_ok: #and not p_b:
                             break
                         #else:
                             #print("ej ok")

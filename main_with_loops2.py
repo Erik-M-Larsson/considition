@@ -12,9 +12,9 @@ from FredrikH2 import ErikurStower, Package, CyberTruck
 api_key = "3b9a5199-9d80-4178-b658-3b216564d0b4"   # TODO: Your api key here
 # The different map names can be found on considition.com/rules
 # TODO: You map choice here. Unless changed, the map "training1" will be selected.
-map_name = "training2"
+map_name = "christmas"
 
-yloop = 10 # Antal generationer
+yloop = 100 # Antal generationer
 iloop = 40 # Eftersom loopen bryts när den får bättre score så kan man ha ett högt värde om man vill få ett värde på varej generation
 
 
@@ -24,9 +24,10 @@ iloop = 40 # Eftersom loopen bryts när den får bättre score så kan man ha et
 def main():
 	print("Starting game...")
 	response = api.new_game(api_key, map_name)
+	print(response["vehicle"])
 	packing_list =  [Package(p) for p in response["dimensions"]]
 	#shuffle(packing_list)
-	packing_list = sorted(packing_list, key = lambda p: (p.dimensions[0]), reverse = True)
+	packing_list = sorted(packing_list, key = lambda p: (p.volume), reverse = True)
 	#packing_list = sorted(packing_list, key = lambda p: (p.volume), reverse = True)
 	packing_list = sorted(packing_list, key = lambda p: (p.heavy), reverse = True)
 	packing_list = sorted(packing_list, key = lambda p: (p.order_class), reverse = True)
